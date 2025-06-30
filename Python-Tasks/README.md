@@ -6,7 +6,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 ### 📌 Course Completion: 0%
 
-2. 🟢 **Pyhton** (Start) 2025-07-1 => 127 Assignments
+1. 🟢 **Pyhton** (Start) 2025-07-1 => 127 Assignments
    ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜
 
 ## Task List:
