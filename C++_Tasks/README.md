@@ -13,7 +13,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                        | Deadline  | Duration | Link                                                                    |
 | --- | ------------------------------------------- | --------- | -------- | ----------------------------------------------------------------------- |
-| 1   | C++ Elzero Assignments For Lessons 01 To 08 | --------- | 1 day    | [Elzero C++ Study Plan](https://elzero.org/study/cplusplus-study-plan/) |
+| 1   | C++ Elzero Assignments For Lessons 01 To 08 | 3/07/2025 | 1 day    | [Elzero C++ Study Plan](https://elzero.org/study/cplusplus-study-plan/) |
 
 ## References:
 
