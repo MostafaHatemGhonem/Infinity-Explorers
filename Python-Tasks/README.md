@@ -15,7 +15,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                         | Deadline  | Duration | Link                                                                              |
 | --- | -------------------------------------------- | --------- | -------- | --------------------------------------------------------------------------------- |
-| 1   | Pyhon Elzero Assignments For Lessons 1 To 10 | 3/07/2025 | 1 day    | [Elzero Pyhton Study Plan](https://elzero.org/study/mastering-python-study-plan/) |
+| 1   | Pyhon Elzero Assignments For Lessons 1 To 10 | 3/07/2025 | 1 day    | [Elzero Pyhton Study Plan](https://elzero.org/python-assignments-lesson-from-1-to-10/) |
 
 ## References:
 
@@ -24,5 +24,5 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 3. [Important PDF books](https://books.goalkicker.com/)
 4. [Elzero cmder Terminal & Command Line](https://www.youtube.com/watch?v=JVs2Ywy7wGQ&list=PLDoPjvoNmBAxzNO8ixW83Sf8FnLy_MkUT)
 5. [DSA & Programming fundamintals](https://github.com/m7mdraafat/Basics-Computer-Science?sfnsn=scwspwa)
-
+6- [Elzero Pyhton Videos]([Elzero Pyhton Study Plane](https://youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs&si=zdbaCk_V3qVpaYtE))
 ### Best wishes, great **Infinty-Explorers** Team!
