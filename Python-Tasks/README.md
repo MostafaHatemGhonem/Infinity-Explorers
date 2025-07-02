@@ -15,7 +15,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                         | Deadline  | Duration | Link                                                                              |
 | --- | -------------------------------------------- | --------- | -------- | --------------------------------------------------------------------------------- |
-| 1   | Pyhon Elzero Assignments For Lessons 1 To 10 | 3/07/2025 | 1 day    | [Elzero Pyhton Study Plan](https://elzero.org/python-assignments-lesson-from-1-to-10/) |
+| 1   | Pyhon Elzero Assignments For Lessons 1 To 10 | 3/07/2025 | 1 day    | [Elzero Pyhton Taska From 1 To 10](https://elzero.org/python-assignments-lesson-from-1-to-10/) |
 
 ## References:
 
