@@ -13,7 +13,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                        | Deadline  | Duration | Link                                                                    |
 | --- | ------------------------------------------- | --------- | -------- | ----------------------------------------------------------------------- |
-| 1   | C++ Elzero Assignments For Lessons 01 To 08 | 3/07/2025 | 1 day    | [Elzero C++ Study Plan](https://elzero.org/study/cplusplus-study-plan/) |
+| 1   | C++ Elzero Assignments For Lessons 01 To 08 | 3/07/2025 | 1 day    | [Elzero Tasks From 1 To 8](https://elzero.org/cpp-assignments-lesson-1-to-8/) |
 
 ## References:
 
@@ -22,5 +22,6 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 3. [Important PDF books](https://books.goalkicker.com/)
 4. [Elzero cmder Terminal & Command Line](https://www.youtube.com/watch?v=JVs2Ywy7wGQ&list=PLDoPjvoNmBAxzNO8ixW83Sf8FnLy_MkUT)
 5. [DSA & Programming fundamintals](https://github.com/m7mdraafat/Basics-Computer-Science?sfnsn=scwspwa)
+6.  [Elzero C++ Study Plan](https://youtube.com/playlist?list=PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS&si=oyeONH8AChAu9R0y)
 
 ### Best wishes, great **Infinty-Explorers** Team!
