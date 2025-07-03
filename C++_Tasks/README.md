@@ -15,7 +15,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 | --- | ------------------------------------------- | --------- | -------- | ----------------------------------------------------------------------- |
 | 1   | C++ Elzero Assignments For Lessons 01 To 08 | 3/07/2025 | 1 day    | [Elzero Tasks From 1 To 8](https://elzero.org/cpp-assignments-lesson-1-to-8/) |
 
-## Task1 C++
+## Task2 C++
 
 | No  | Task                                         | Deadline  | Time | Duration | Link                                                                              |
 | --- | -------------------------------------------- | --------- | ---------| -------- | --------------------------------------------------------------------------------- |
