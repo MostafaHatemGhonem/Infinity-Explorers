@@ -21,13 +21,13 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                             |
 | --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| 1   | Pyhon Elzero Assignments For Lessons 11 To 18 | 4/07/2025 | 10:00 PM | 1 day    | [Elzero Pyhton Taska From 11 To 18](https://elzero.org/python-assignments-lesson-from-11-to-18/) |
+| 2   | Pyhon Elzero Assignments For Lessons 11 To 18 | 4/07/2025 | 10:00 PM | 1 day    | [Elzero Pyhton Taska From 11 To 18](https://elzero.org/python-assignments-lesson-from-11-to-18/) |
 
 ## Task3 Pyhton
 
 | No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                             |
 | --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| 1   | Pyhon Elzero Assignments For Lessons 19 To 20 | 5/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 19 To 20](https://elzero.org/python-assignments-lesson-from-19-to-20/) |
+| 3   | Pyhon Elzero Assignments For Lessons 19 To 20 | 5/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 19 To 20](https://elzero.org/python-assignments-lesson-from-19-to-20/) |
 
 ## References:
 
