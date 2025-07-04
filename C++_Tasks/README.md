@@ -25,7 +25,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                  |
 | --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------- |
-| 1   | Pyhon Elzero Assignments For Lessons 16 To 23 | 5/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 16 To 23](https://elzero.org/cpp-assignments-lesson-16-to-23/) |
+| 1   | C++ Elzero Assignments For Lessons 16 To 23 | 5/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 16 To 23](https://elzero.org/cpp-assignments-lesson-16-to-23/) |
 
 ## References:
 
