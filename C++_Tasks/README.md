@@ -23,9 +23,15 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 ## Task3 C++
 
-| No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                  |
-| --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------- |
+| No  | Task                                        | Deadline  | Time     | Duration | Link                                                                                  |
+| --- | ------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------- |
 | 3   | C++ Elzero Assignments For Lessons 16 To 23 | 5/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 16 To 23](https://elzero.org/cpp-assignments-lesson-16-to-23/) |
+
+## Task4 C++
+
+| No  | Task                                        | Deadline  | Time     | Duration | Link                                                                                  |
+| --- | ------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------- |
+| 4   | C++ Elzero Assignments For Lessons 24 To 29 | 6/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 24 To 29](https://elzero.org/cpp-assignments-lesson-24-to-29/) |
 
 ## References:
 
