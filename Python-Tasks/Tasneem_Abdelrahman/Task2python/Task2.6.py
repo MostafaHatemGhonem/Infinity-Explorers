@@ -1,0 +1,10 @@
+a="9"
+b="15"
+c="130"
+d="950"
+f="1200"
+print(a.zfill(4)) 
+print(b.zfill(4)) 
+print(c.zfill(4)) 
+print(d.zfill(4))
+print(f.zfill(4))
