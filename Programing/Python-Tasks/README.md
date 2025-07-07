@@ -33,13 +33,19 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                             |
 | --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| 4   | Pyhon Elzero Assignments For Lessons 21 To 23 | 5/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 21 To 23](https://elzero.org/python-assignments-lesson-from-21-to-23/) |
+| 4   | Pyhon Elzero Assignments For Lessons 21 To 23 | 6/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 21 To 23](https://elzero.org/python-assignments-lesson-from-21-to-23/) |
 
 ## Task5 Pyhton
 
 | No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                             |
 | --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| 5   | Pyhon Elzero Assignments For Lessons 24 To 25 | 6/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 24 To 25](https://elzero.org/python-assignments-lesson-from-24-to-25/) |
+| 5   | Pyhon Elzero Assignments For Lessons 24 To 25 | 7/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 24 To 25](https://elzero.org/python-assignments-lesson-from-24-to-25/) |
+
+## Task6 Pyhton
+
+| No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                             |
+| --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
+| 6   | Pyhon Elzero Assignments For Lessons 26 To 32 | 8/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 26 To 32](https://elzero.org/python-assignments-lesson-from-26-to-32/) |
 
 ## References:
 
