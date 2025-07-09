@@ -49,7 +49,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                        | Deadline  | Time     | Duration | Link                                                                                  |
 | --- | ------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------- |
-| 7   | C++ Elzero Assignments For Lessons 38 To 46 | 9/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 36 To 37](https://elzero.org/cpp-assignments-lesson-38-to-46/) |
+| 7   | C++ Elzero Assignments For Lessons 38 To 46 | 10/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 36 To 37](https://elzero.org/cpp-assignments-lesson-38-to-46/) |
 
 ## References:
 
