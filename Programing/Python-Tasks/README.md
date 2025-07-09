@@ -51,7 +51,7 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                          | Deadline  | Time     | Duration | Link                                                                                             |
 | --- | --------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| 7   | Pyhon Elzero Assignments For Lessons 33 To 37 | 9/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 33 To 37](https://elzero.org/python-assignments-lesson-from-33-to-37/) |
+| 7   | Pyhon Elzero Assignments For Lessons 33 To 37 | 10/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 33 To 37](https://elzero.org/python-assignments-lesson-from-33-to-37/) |
 
 ## References:
 
