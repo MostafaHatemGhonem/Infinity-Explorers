@@ -1,0 +1,8 @@
+print(bool(1)) 
+print(bool("Tasneem")) 
+print(bool(10.5)) 
+print(bool(True)) 
+print(bool()) 
+print(bool([])) 
+print(bool(""))
+print(bool(False)) 
