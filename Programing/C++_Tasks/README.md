@@ -47,9 +47,15 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 ## Task7 C++
 
-| No  | Task                                        | Deadline  | Time     | Duration | Link                                                                                  |
-| --- | ------------------------------------------- | --------- | -------- | -------- | ------------------------------------------------------------------------------------- |
+| No  | Task                                        | Deadline   | Time     | Duration | Link                                                                                  |
+| --- | ------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------- |
 | 7   | C++ Elzero Assignments For Lessons 38 To 46 | 10/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 36 To 37](https://elzero.org/cpp-assignments-lesson-38-to-46/) |
+
+## Task8 C++
+
+| No  | Task                                        | Deadline   | Time     | Duration | Link                                                                                  |
+| --- | ------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------- |
+| 8   | C++ Elzero Assignments For Lessons 47 To 54 | 11/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 47 To 54](https://elzero.org/cpp-assignments-lesson-47-to-54/) |
 
 ## References:
 
