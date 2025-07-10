@@ -59,6 +59,10 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 | --- | --------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
 | 8   | Pyhon Elzero Assignments For Lessons 38 To 40 | 10/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 38 To 40](https://elzero.org/python-assignments-lesson-from-38-to-40/) |
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0a8cbc0254317d9d556e1dd0c1a197bf9650358f
 ## References:
 
 1. [Elzero C++ Study Plan](https://elzero.org/study/cplusplus-study-plan/)
