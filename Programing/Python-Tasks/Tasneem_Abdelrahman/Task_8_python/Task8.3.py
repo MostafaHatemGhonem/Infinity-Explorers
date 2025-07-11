@@ -1,0 +1,5 @@
+first_name=input("What's your first name? ") 
+second_name=input("What's your second name? ") 
+first_name=first_name.strip().capitalize()
+second_name=second_name.strip().capitalize()
+print(f"Hello {first_name} {second_name:.1s} !") 
