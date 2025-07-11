@@ -1,0 +1,2 @@
+email="MariamE45@gemail.com" .capitalize().strip()
+print(f"my name is:{email[:email.index("@")]} \nEmail Service Provider Is:{email[email.index("@")+1:email.index(".")]}\nTop Level Domain Is:{email[email.index(".")+1:]}")
