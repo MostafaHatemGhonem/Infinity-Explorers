@@ -57,6 +57,12 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 | --- | ------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------- |
 | 8   | C++ Elzero Assignments For Lessons 47 To 54 | 12/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 47 To 54](https://elzero.org/cpp-assignments-lesson-47-to-54/) |
 
+## Task9 C++
+
+| No  | Task                                        | Deadline   | Time     | Duration | Link                                                                                  |
+| --- | ------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------- |
+| 9   | C++ Elzero Assignments For Lessons 55 To 66 | 14/07/2025 | 12:00 PM | 1 day    | [Elzero C++ Tasks From 55 To 66](https://elzero.org/cpp-assignments-lesson-55-to-66/) |
+
 ## References:
 
 1. [Elzero C++ Study Plan](https://elzero.org/study/cplusplus-study-plan/)
