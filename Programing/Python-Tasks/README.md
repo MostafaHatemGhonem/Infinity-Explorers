@@ -71,6 +71,12 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 | --- | --------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
 | 10  | Pyhon Elzero Assignments For Lessons 47 To 50 | 14/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 47 To 50](https://elzero.org/python-assignments-lesson-from-47-to-50/) |
 
+## Task11 Pyhton
+
+| No  | Task                                          | Deadline   | Time     | Duration | Link                                                                                             |
+| --- | --------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
+| 11  | Pyhon Elzero Assignments For Lessons 51 To 55 | 15/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 51 To 55](https://elzero.org/python-assignments-lesson-from-51-to-55/) |
+
 ## References:
 
 1. [Elzero C++ Study Plan](https://elzero.org/study/cplusplus-study-plan/)
@@ -78,6 +84,6 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 3. [Important PDF books](https://books.goalkicker.com/)
 4. [Elzero cmder Terminal & Command Line](https://www.youtube.com/watch?v=JVs2Ywy7wGQ&list=PLDoPjvoNmBAxzNO8ixW83Sf8FnLy_MkUT)
 5. [DSA & Programming fundamintals](https://github.com/m7mdraafat/Basics-Computer-Science?sfnsn=scwspwa)
-6. [Elzero Pyhton Videos](https://youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs&si=zdbaCk_V3qVpaYtE))
+6. [Elzero Pyhton Videos](https://youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs&si=zdbaCk_V3qVpaYtE)
 
 ### Best wishes, great **Infinty-Explorers** Team!
