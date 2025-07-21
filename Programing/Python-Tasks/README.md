@@ -101,6 +101,12 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 | --- | --------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
 | 15  | Pyhon Elzero Assignments For Lessons 69 To 71 | 21/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 69 To 71](https://elzero.org/python-assignments-lesson-from-69-to-71/) |
 
+## Task16 Pyhton
+
+| No  | Task                                          | Deadline   | Time     | Duration | Link                                                                                             |
+| --- | --------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
+| 16  | Pyhon Elzero Assignments For Lessons 72 To 75 | 22/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 72 To 75](https://elzero.org/python-assignments-lesson-from-72-to-75/) |
+
 ## References:
 
 1. [Elzero C++ Study Plan](https://elzero.org/study/cplusplus-study-plan/)
