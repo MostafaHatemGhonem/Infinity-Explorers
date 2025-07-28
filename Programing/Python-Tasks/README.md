@@ -123,7 +123,13 @@ This is to solve daily tasks and to make the group accustomed to the teams and h
 
 | No  | Task                                          | Deadline   | Time     | Duration | Link                                                                                             |
 | --- | --------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| 19  | Pyhon Elzero Assignments For Lessons 81 To 85 | 27/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 81 To 85](https://elzero.org/python-assignments-lesson-from-81-to-85/) |
+| 19  | Pyhon Elzero Assignments For Lessons 81 To 85 | 28/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 81 To 85](https://elzero.org/python-assignments-lesson-from-81-to-85/) |
+
+## Task20 Pyhton
+
+| No  | Task                                          | Deadline   | Time     | Duration | Link                                                                                             |
+| --- | --------------------------------------------- | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
+| 20  | Pyhon Elzero Assignments For Lessons 86 To 89 | 29/07/2025 | 12:00 PM | 1 day    | [Elzero Pyhton Tasks From 86 To 89](https://elzero.org/python-assignments-lesson-from-86-to-89/) |
 
 ## References:
 
