@@ -81,7 +81,92 @@ We envision a world where:
 
 ---
 
-## 🌍 Join Our Journey
+## � Live Interactive Demonstrations
+
+### 🔬 **Energy Systems & Electrochemistry**
+
+#### [Alkaline Electrolysis Reactor](https://alkalineelectrolysisreactor.vercel.app/)
+**Interactive hydrogen production analysis dashboard**
+- Real-time electrolysis efficiency calculations
+- Thermodynamic cycle visualization
+- Material compatibility analysis
+- Safety protocols integration
+
+### 🌡️ **Thermal Management & Cooling Systems**
+
+#### [Thermoelectric Cooling Explorer](https://advancedthermoelectriccoolingthepel.vercel.app/)
+**Advanced Peltier module analysis platform**
+- Seebeck effect simulation
+- Thermal resistance network modeling
+- Power optimization algorithms
+- Real-time temperature gradient visualization
+
+#### [Advanced TEC Thermal Control](https://advanced-tec-thermal-control.vercel.app/)
+**Precision thermal management system**
+- Multi-stage cooling optimization
+- PID control parameter tuning
+- Heat sink performance analysis
+- Energy efficiency monitoring
+
+#### [Peltier Module Dual Heatsink System](https://peltiermoduledualheatsinksystem.vercel.app/)
+**Dual-heatsink architecture exploration**
+- Comparative thermal performance
+- Heat flux distribution analysis
+- System efficiency optimization
+- Component sizing calculator
+
+#### [Automated Fluid Dispensing System](https://automatedfluiddispensingsystem.vercel.app/)
+**Mechatronic fluid control platform**
+- Precision dispensing algorithms
+- Pump performance monitoring
+- Flow rate optimization
+- System integration diagnostics
+
+### ⚙️ **Mechanical & Thermodynamic Systems**
+
+#### [Stirling Engine Thermodynamic Analysis](https://stirlingenginethermodynamic.vercel.app/)
+**Comprehensive Stirling engine simulator**
+- Alpha/Beta/Gamma configuration comparison
+- Schmidt kinematic analysis
+- P-V cycle visualization
+- Working fluid performance optimization
+
+#### [Thermoelectric Generators (TEG) Analysis](https://thermoelectricgeneratorsteg.vercel.app/)
+**Solid-state energy conversion platform**
+- Figure of merit (ZT) analysis
+- Material property comparison
+- Power point tracking simulation
+- Failure mode analysis
+
+### 🎯 **What These Platforms Offer**
+
+Each interactive dashboard provides:
+
+- **Real-time Simulations**: Dynamic modeling of complex engineering systems
+- **Educational Content**: Comprehensive explanations of underlying physics and engineering principles
+- **Interactive Controls**: Hands-on parameter adjustment to understand system behavior
+- **Data Visualization**: Charts, graphs, and diagrams that make complex data intuitive
+- **Professional Analysis**: Industry-standard calculations and optimization methods
+- **Responsive Design**: Accessible on desktop, tablet, and mobile devices
+
+### 🔍 **How to Use These Tools**
+
+1. **Explore**: Navigate through different tabs and sections to understand system architecture
+2. **Interact**: Adjust parameters using sliders and controls to see real-time effects
+3. **Learn**: Read the educational content to understand the underlying principles
+4. **Apply**: Use the insights for your own engineering projects and research
+
+### 💡 **Educational Value**
+
+These platforms serve as:
+- **Learning Resources** for students and educators
+- **Design Tools** for engineers and researchers
+- **Demonstration Platforms** for industry professionals
+- **Innovation Catalysts** for sustainable energy development
+
+---
+
+## �🌍 Join Our Journey
 
 Whether you're:
 - A student looking to understand complex engineering concepts
