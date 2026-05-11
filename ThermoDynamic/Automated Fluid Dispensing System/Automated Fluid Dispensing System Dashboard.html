@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Fluid Dispensing System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        .tab-active {
+            border-bottom-width: 4px;
+            border-color: #0d9488;
+            color: #0f766e;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            border-bottom-width: 4px;
+            border-color: transparent;
+            color: #64748b;
+        }
+        .tab-inactive:hover {
+            color: #0d9488;
+            background-color: #f8fafc;
+        }
+        .flow-line {
+            height: 4px;
+            background-color: #cbd5e1;
+            width: 50px;
+            position: relative;
+        }
+        .flow-arrow {
+            position: absolute;
+            right: -10px;
+            top: -6px;
+            width: 0; 
+            height: 0; 
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 10px solid #cbd5e1;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Chosen Palette: Warm neutrals (stone-50 background, stone-800 text) with teal-600 accents for a calm, professional engineering aesthetic. -->
+    <!-- Application Structure Plan: A tabbed dashboard layout organizing the technical specification into logical engineering domains (Overview, Electronics, Fluid Dynamics, Specs). This prevents overwhelming vertical scrolling, allows users to focus on specific subsystems, and provides a structured, app-like experience for consuming complex technical data. -->
+    <!-- Visualization & Content Choices: 1. Optoelectronics -> Chart.js Line Chart -> Interaction: Hover -> Goal: Inform/Relationships -> Visualizes the inverse-square law for IR sensors. 2. Thermal Management -> HTML Sliders/JS Math -> Interaction: Value adjustment -> Goal: Change/Inform -> Demonstrates dynamic power loss calculation. 3. Hydraulics -> Chart.js Multi-line Chart -> Interaction: Hover -> Goal: Compare/Relationships -> Shows Pump Power vs Flow Rate across different head pressures. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-white shadow-sm border-b border-stone-200 sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h1 class="text-3xl font-bold text-stone-900 tracking-tight">Automated Fluid Dispensing System</h1>
+            <p class="mt-2 text-sm text-stone-500 font-medium tracking-wide uppercase">Engineering Technical Specification Dashboard</p>
+        </div>
+        
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex space-x-1 overflow-x-auto pb-1" aria-label="Tabs">
+                <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn tab-active whitespace-nowrap py-3 px-4 text-sm font-medium focus:outline-none">
+                    &#128269; System Overview
+                </button>
+                <button onclick="switchTab('electronics')" id="tab-electronics" class="tab-btn tab-inactive whitespace-nowrap py-3 px-4 text-sm font-medium focus:outline-none">
+                    &#9889; Electronics & Control
+                </button>
+                <button onclick="switchTab('fluids')" id="tab-fluids" class="tab-btn tab-inactive whitespace-nowrap py-3 px-4 text-sm font-medium focus:outline-none">
+                    &#128167; Fluid Dynamics
+                </button>
+                <button onclick="switchTab('bom')" id="tab-bom" class="tab-btn tab-inactive whitespace-nowrap py-3 px-4 text-sm font-medium focus:outline-none">
+                    &#128203; Specs & BOM
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="content-overview" class="block animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 md:p-8 mb-8">
+                <h2 class="text-2xl font-bold text-stone-800 mb-4">Architecture Overview</h2>
+                <div class="mb-6 rounded-lg overflow-hidden">
+                    <img src="https://designetics.com/wp-content/uploads/2023/09/AUTOPRIME-CE-Automated-Fluid-Dispensing-System.jpg" 
+                         alt="Automated Fluid Dispensing System" 
+                         class="w-full h-auto object-cover rounded-lg"
+                         onerror="this.src='https://via.placeholder.com/600x300/0d9488/ffffff?text=Automated+Fluid+Dispensing+System'">
+                    <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                        Industrial automated fluid dispensing system with precision pump and control electronics
+                    </div>
+                </div>
+                <p class="text-stone-600 leading-relaxed mb-6">
+                    Welcome to the system architecture overview. This section provides a high-level operational understanding of the closed-loop fluid dispensing system. The mechatronic assembly integrates optoelectronic proximity sensing, solid-state power switching, and a mechanical centrifugal pump to achieve touchless operation. The system acts as a transducer, converting external spatial perturbations into electrical signals, which are subsequently amplified to produce hydraulic work.
+                </p>
+
+                <div class="bg-stone-50 p-6 rounded-lg border border-stone-200">
+                    <h3 class="text-lg font-semibold text-stone-700 mb-6 text-center">Mechatronic Signal Flow</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-2">
+                        <div class="bg-teal-100 border-2 border-teal-500 text-teal-800 px-6 py-4 rounded-lg shadow-sm text-center w-48">
+                            <span class="text-2xl block mb-2">&#128075;</span>
+                            <span class="font-bold text-sm">Spatial Input</span>
+                            <span class="block text-xs mt-1">Object/Hand</span>
+                        </div>
+                        <div class="hidden md:flex items-center"><div class="flow-line"><div class="flow-arrow"></div></div></div>
+                        <div class="md:hidden text-stone-400 text-2xl">&#8595;</div>
+                        <div class="bg-amber-100 border-2 border-amber-500 text-amber-800 px-6 py-4 rounded-lg shadow-sm text-center w-48">
+                            <span class="text-2xl block mb-2">&#128065;</span>
+                            <span class="font-bold text-sm">IR Sensor</span>
+                            <span class="block text-xs mt-1">Phototransistor</span>
+                        </div>
+                        <div class="hidden md:flex items-center"><div class="flow-line"><div class="flow-arrow"></div></div></div>
+                        <div class="md:hidden text-stone-400 text-2xl">&#8595;</div>
+                        <div class="bg-blue-100 border-2 border-blue-500 text-blue-800 px-6 py-4 rounded-lg shadow-sm text-center w-48">
+                            <span class="text-2xl block mb-2">&#128423;</span>
+                            <span class="font-bold text-sm">Power Logic</span>
+                            <span class="block text-xs mt-1">MOSFET Switch</span>
+                        </div>
+                        <div class="hidden md:flex items-center"><div class="flow-line"><div class="flow-arrow"></div></div></div>
+                        <div class="md:hidden text-stone-400 text-2xl">&#8595;</div>
+                        <div class="bg-cyan-100 border-2 border-cyan-500 text-cyan-800 px-6 py-4 rounded-lg shadow-sm text-center w-48">
+                            <span class="text-2xl block mb-2">&#128168;</span>
+                            <span class="font-bold text-sm">Actuator</span>
+                            <span class="block text-xs mt-1">Centrifugal Pump</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="content-electronics" class="hidden animate-fade-in">
+            <div class="mb-6">
+                <p class="text-stone-600 text-lg">
+                    Explore the optoelectronic detection mechanisms, solid-state power switching, and theoretical control systems. Interact with the models to understand signal attenuation over distance and thermal dissipation in power electronics.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="text-xl font-bold text-stone-800 mb-3 border-b pb-2">Optoelectronic Detection</h3>
+                    <p class="text-sm text-stone-600 mb-4">
+                        The subsystem relies on active infrared (IR) reflectance ($\lambda \approx 940$ nm). Reflected intensity $I_r$ follows the inverse-square law combined with Lambertian reflectance.
+                        <br><br>
+                        <strong>$I_r \propto (I_0 \cdot R_d) / d^2$</strong>
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="irChart"></canvas>
+                    </div>
+                    <p class="text-xs text-stone-500 mt-4 text-center">Interactive Model: Shows rapid attenuation of IR signal relative to target distance.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-stone-800 mb-3 border-b pb-2">Thermal Management & EMI</h3>
+                    <p class="text-sm text-stone-600 mb-4">
+                        A logic-level N-channel MOSFET acts as a switch. Power dissipation generates heat. Use the sliders below to dynamically calculate conduction losses ($P_{loss} = I_D^2 \cdot R_{DS(on)}$).
+                    </p>
+                    
+                    <div class="bg-stone-50 p-5 rounded-lg border border-stone-200 flex-grow">
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-1">
+                                <label for="currentSlider" class="text-sm font-medium text-stone-700">Drain Current ($I_D$)</label>
+                                <span id="currentVal" class="text-sm font-bold text-teal-700">5.0 A</span>
+                            </div>
+                            <input type="range" id="currentSlider" min="0.1" max="20" step="0.1" value="5" class="w-full h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-1">
+                                <label for="resistanceSlider" class="text-sm font-medium text-stone-700">On-Resistance ($R_{DS(on)}$)</label>
+                                <span id="resistanceVal" class="text-sm font-bold text-teal-700">0.022 &#8486;</span>
+                            </div>
+                            <input type="range" id="resistanceSlider" min="0.005" max="0.1" step="0.001" value="0.022" class="w-full h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                        </div>
+
+                        <div class="mt-8 bg-white border border-stone-200 rounded p-4 text-center shadow-inner">
+                            <span class="block text-sm text-stone-500 uppercase tracking-wide">Calculated Power Loss</span>
+                            <span id="powerLossResult" class="text-3xl font-black text-rose-600 block mt-2">0.55 W</span>
+                            <span class="block text-xs text-stone-400 mt-2">Requires heatsink if > 1.5W depending on ambient temp ($T_A$).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                <h3 class="text-xl font-bold text-stone-800 mb-4">Control Systems Integration</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-stone-700 mb-2">System Transfer Function</h4>
+                        <p class="text-sm text-stone-600">The DC motor and pump assembly modeled as a second-order linear time-invariant (LTI) system:</p>
+                        <div class="bg-stone-100 p-3 rounded mt-2 text-center font-mono text-sm border border-stone-200 overflow-x-auto">
+                            G(s) = &omega;(s) / V(s) = K<sub>t</sub> / [(L<sub>a</sub>s + R<sub>a</sub>)(Js + b) + K<sub>t</sub>K<sub>e</sub>]
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-stone-700 mb-2">PID Flow Control</h4>
+                        <p class="text-sm text-stone-600">Discrete Proportional-Integral-Derivative controller for precise volumetric flow rate:</p>
+                        <div class="bg-stone-100 p-3 rounded mt-2 text-center font-mono text-sm border border-stone-200 overflow-x-auto">
+                            u[k] = K<sub>p</sub>e[k] + K<sub>i</sub>&sum;e[j]&Delta;t + K<sub>d</sub>(e[k]-e[k-1])/&Delta;t
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="content-fluids" class="hidden animate-fade-in">
+            <div class="mb-6">
+                <p class="text-stone-600 text-lg">
+                    This section analyzes the electromechanical conversion utilizing a micro-centrifugal pump. Interact with the hydraulic power chart to compare theoretical power requirements across different fluid dynamic constraints.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 md:p-8 mb-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1">
+                        <h3 class="text-xl font-bold text-stone-800 mb-3">Hydraulic Power</h3>
+                        <p class="text-sm text-stone-600 mb-4">
+                            The impeller imparts kinetic energy, increasing static pressure and flow rate. Hydraulic power ($P_{hyd}$) delivered is calculated as:
+                        </p>
+                        <div class="bg-stone-100 p-4 rounded border border-stone-200 text-center font-mono text-lg mb-6">
+                            P<sub>hyd</sub> = &rho; &middot; g &middot; Q &middot; H<sub>total</sub>
+                        </div>
+                        <ul class="text-sm text-stone-600 space-y-2 list-disc pl-5">
+                            <li><strong>&rho;</strong> = Fluid density (998 kg/m&sup3;)</li>
+                            <li><strong>g</strong> = Gravity (9.81 m/s&sup2;)</li>
+                            <li><strong>Q</strong> = Flow rate (m&sup3;/s)</li>
+                            <li><strong>H<sub>total</sub></strong> = Total dynamic head (m)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="lg:col-span-2">
+                        <div class="chart-container">
+                            <canvas id="hydraulicChart"></canvas>
+                        </div>
+                        <p class="text-xs text-stone-500 mt-4 text-center">Interactive Model: Required Power (Watts) vs. Flow Rate (L/min) at varying Dynamic Heads.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="text-lg font-bold text-stone-800 mb-2 border-b pb-2">Navier-Stokes Context</h3>
+                    <p class="text-sm text-stone-600">
+                        Total dynamic head must account for major friction losses in the piping ($h_f$), calculated via the Darcy-Weisbach equation:
+                    </p>
+                    <div class="bg-stone-50 p-3 mt-3 rounded text-center border border-stone-200 font-mono text-sm">
+                        h<sub>f</sub> = f<sub>D</sub> &middot; (L/D) &middot; (v&sup2;/2g)
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="text-lg font-bold text-stone-800 mb-2 border-b pb-2">Cavitation & NPSH</h3>
+                    <p class="text-sm text-stone-600">
+                        To prevent destructive vapor bubble collapse, Net Positive Suction Head Available ($NPSH_A$) must exceed Required ($NPSH_R$):
+                    </p>
+                    <div class="bg-stone-50 p-3 mt-3 rounded text-center border border-stone-200 font-mono text-sm">
+                        NPSH<sub>A</sub> = [(P<sub>abs</sub> - P<sub>v</sub>) / &rho;g] - h<sub>z</sub> - h<sub>f</sub> &ge; NPSH<sub>R</sub>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="content-bom" class="hidden animate-fade-in">
+            <div class="mb-6">
+                <p class="text-stone-600 text-lg">
+                    Review the university-grade Bill of Materials required for implementation, and explore how the core physics principles scale to advanced, industrial applications.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-stone-200 bg-stone-50">
+                    <h3 class="text-xl font-bold text-stone-800">Bill of Materials</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-stone-200 text-sm">
+                        <thead class="bg-stone-100">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left font-semibold text-stone-700">Subsystem</th>
+                                <th scope="col" class="px-6 py-3 text-left font-semibold text-stone-700">Component</th>
+                                <th scope="col" class="px-6 py-3 text-left font-semibold text-stone-700">Engineering Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-stone-200" id="bomTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-stone-800 mb-6">Advanced Engineering Applications</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-6 hover:shadow-md transition-shadow duration-200 border-t-4 border-t-emerald-500">
+                    <div class="text-3xl mb-3">&#127793;</div>
+                    <h4 class="text-lg font-bold text-stone-800 mb-2">Precision Agriculture</h4>
+                    <p class="text-sm text-stone-600">Integration with capacitive soil moisture sensors to create an automated evapotranspiration-based irrigation matrix, optimizing expenditure using PID control loops.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-6 hover:shadow-md transition-shadow duration-200 border-t-4 border-t-blue-500">
+                    <div class="text-3xl mb-3">&#127973;</div>
+                    <h4 class="text-lg font-bold text-stone-800 mb-2">Aseptic Dispensing</h4>
+                    <p class="text-sm text-stone-600">Deployment in surgical scrubbing stations where cross-contamination vectors must be mathematically reduced to near-zero probabilities through strict non-contact actuation.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-amber-200 p-6 hover:shadow-md transition-shadow duration-200 border-t-4 border-t-amber-500">
+                    <div class="text-3xl mb-3">&#9888;&#65039;</div>
+                    <h4 class="text-lg font-bold text-stone-800 mb-2">Industrial Dosing</h4>
+                    <p class="text-sm text-stone-600">Utilizing peristaltic variants instead of centrifugal pumps for highly accurate, time-dependent volumetric dosing of corrosive fluids, factoring in non-Newtonian behaviors.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-6 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center text-sm">
+            Interactive Documentation &middot; Automated Fluid Dispensing System Architecture
+        </div>
+    </footer>
+
+    <script>
+        const bomData = [
+            { sys: "Sensor", comp: "TCRT5000 IR Reflective Module", rat: "Incorporates IR LED, phototransistor, and LM393 comparator with adjustable potentiometer." },
+            { sys: "Actuator", comp: "5V-12V DC Submersible Centrifugal Pump", rat: "Brushless DC preferred for longevity, zero brush EMI, and higher MTBF." },
+            { sys: "Power Switching", comp: "IRLZ44N Logic-Level N-Channel Power MOSFET", rat: "Low R_DS(on) for reduced thermal dissipation driven by logic levels." },
+            { sys: "Protection & Filtering", comp: "1N5819 Schottky Flyback Diode; 3x 100nF Ceramic Caps", rat: "Provides safe discharge path for inductive spikes; suppresses commutation EMI." },
+            { sys: "Control Logic", comp: "MCU (e.g., STM32F103 or ESP32)", rat: "Implements 20kHz+ PWM (supersonic to avoid noise) and digital PID debounce algorithms." },
+            { sys: "Power Supply", comp: "DC Switch Mode Power Supply (SMPS)", rat: "Regulated output capable of handling motor stall currents (e.g., 12V/3A)." },
+            { sys: "Hydraulics", comp: "Silicone/PVC tubing", rat: "Mathematically sized to match pump discharge nozzle to minimize Reynolds number turbulence." }
+        ];
+
+        const tbody = document.getElementById('bomTableBody');
+        bomData.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-stone-900 font-medium">${item.sys}</td>
+                <td class="px-6 py-4 text-stone-700">${item.comp}</td>
+                <td class="px-6 py-4 text-stone-500 italic">${item.rat}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        function switchTab(tabId) {
+            const sections = ['overview', 'electronics', 'fluids', 'bom'];
+            sections.forEach(id => {
+                document.getElementById('content-' + id).classList.add('hidden');
+                document.getElementById('content-' + id).classList.remove('block');
+                
+                const btn = document.getElementById('tab-' + id);
+                btn.classList.remove('tab-active');
+                btn.classList.add('tab-inactive');
+            });
+
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('content-' + tabId).classList.add('block');
+            
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('tab-inactive');
+            activeBtn.classList.add('tab-active');
+        }
+
+        const irDistances = Array.from({length: 20}, (_, i) => i + 1);
+        const irIntensity = irDistances.map(d => 1000 / (d * d));
+
+        const ctxIr = document.getElementById('irChart').getContext('2d');
+        new Chart(ctxIr, {
+            type: 'line',
+            data: {
+                labels: irDistances,
+                datasets: [{
+                    label: 'Reflected Intensity (Relative)',
+                    data: irIntensity,
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#0f766e',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Intensity: ${context.parsed.y.toFixed(2)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Distance (cm)', font: {weight: 'bold'} },
+                        grid: { display: false }
+                    },
+                    y: {
+                        title: { display: true, text: 'Signal Intensity', font: {weight: 'bold'} },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const currentSlider = document.getElementById('currentSlider');
+        const resistanceSlider = document.getElementById('resistanceSlider');
+        const currentValDisplay = document.getElementById('currentVal');
+        const resistanceValDisplay = document.getElementById('resistanceVal');
+        const powerLossResult = document.getElementById('powerLossResult');
+
+        function calculatePower() {
+            const i = parseFloat(currentSlider.value);
+            const r = parseFloat(resistanceSlider.value);
+            const p = (i * i) * r;
+            
+            currentValDisplay.textContent = i.toFixed(1) + ' A';
+            resistanceValDisplay.textContent = r.toFixed(3) + ' \u2126';
+            powerLossResult.textContent = p.toFixed(2) + ' W';
+            
+            if(p > 1.5) {
+                powerLossResult.classList.remove('text-rose-600', 'text-teal-600');
+                powerLossResult.classList.add('text-red-600');
+            } else if (p < 0.5) {
+                powerLossResult.classList.remove('text-rose-600', 'text-red-600');
+                powerLossResult.classList.add('text-teal-600');
+            } else {
+                powerLossResult.classList.remove('text-teal-600', 'text-red-600');
+                powerLossResult.classList.add('text-rose-600');
+            }
+        }
+
+        currentSlider.addEventListener('input', calculatePower);
+        resistanceSlider.addEventListener('input', calculatePower);
+        calculatePower();
+
+        const flowRates = Array.from({length: 11}, (_, i) => i); 
+        const rho = 998; 
+        const g = 9.81; 
+        
+        function calcPower(qLPM, h) {
+            const qM3S = qLPM / 60000; 
+            return rho * g * qM3S * h;
+        }
+
+        const head1 = flowRates.map(q => calcPower(q, 0.5));
+        const head2 = flowRates.map(q => calcPower(q, 1.5));
+        const head3 = flowRates.map(q => calcPower(q, 3.0));
+
+        const ctxHyd = document.getElementById('hydraulicChart').getContext('2d');
+        new Chart(ctxHyd, {
+            type: 'line',
+            data: {
+                labels: flowRates,
+                datasets: [
+                    {
+                        label: 'Head = 0.5m',
+                        data: head1,
+                        borderColor: '#94a3b8',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Head = 1.5m',
+                        data: head2,
+                        borderColor: '#0284c7',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Head = 3.0m',
+                        data: head3,
+                        borderColor: '#be123c',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y.toFixed(2)} W`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Flow Rate Q (L/min)', font: {weight: 'bold'} }
+                    },
+                    y: {
+                        title: { display: true, text: 'Required Hyd. Power (Watts)', font: {weight: 'bold'} },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

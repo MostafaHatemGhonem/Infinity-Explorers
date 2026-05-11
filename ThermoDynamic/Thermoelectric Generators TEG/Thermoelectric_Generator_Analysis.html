@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermoelectric Generators (TEG) Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Warm Neutrals & Earth Tones (Calm Harmony) -->
+    <!-- Application Structure Plan: A dynamic, interactive dashboard-style Single Page Application (SPA). The architecture is divided into five thematic tabs: 'Physics & Seebeck', 'Thermal Circuit', 'Materials (ZT)', 'Power & MPPT', and 'Failure Modes'. This structure was chosen because the source report follows a highly technical, sequential progression from sub-atomic physics to macroscopic system engineering. A tabbed dashboard allows users to ingest complex mathematical and physical concepts in digestible chunks without being overwhelmed by a massive wall of text. Interactive simulators and dynamic charts provide immediate visual feedback for complex equations (like Jacobi's Law and the Seebeck effect). -->
+    <!-- Visualization & Content Choices: 
+         1. Seebeck Simulation -> Goal: Inform/Change -> Viz: HTML/CSS Slider & Dynamic Text -> Interaction: User adjusts Temp -> Justification: Tangibly demonstrates Voc = S * deltaT -> Library: Vanilla JS + DOM. 
+         2. Thermal Resistance Network -> Goal: Organize/Relationships -> Viz: Interactive Stacked HTML Grid -> Interaction: Hover to reveal resistance types -> Justification: Replaces complex SVG diagrams with CSS to show 1D heat flux bottlenecks -> Library: Tailwind CSS. 
+         3. Material Efficiency -> Goal: Compare -> Viz: Chart.js Bar Chart -> Interaction: Hover tooltips -> Justification: Clearly contrasts temperature regimes and efficiencies -> Library: Chart.js (Canvas). 
+         4. Maximum Power Point -> Goal: Inform/Relationships -> Viz: Chart.js Line Chart -> Interaction: Dynamic curve plotting -> Justification: Visually proves Jacobi's law (R_load = R_int) -> Library: Chart.js (Canvas).
+         Confirmations: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        /* Custom Styles & Chart Container Constraints */
+        body {
+            background-color: #fcfbf9; /* Warm off-white */
+            color: #3b3a37; /* Soft dark grey for text */
+        }
+        
+        .accent-bg { background-color: #d27c65; } /* Terracotta/Rust */
+        .accent-text { color: #d27c65; }
+        .cold-bg { background-color: #6d8e9e; } /* Muted blue */
+        .neutral-border { border-color: #e5e0d8; }
+        .active-tab {
+            border-left: 4px solid #d27c65;
+            background-color: #f4efea;
+            font-weight: 600;
+        }
+
+        /* CRITICAL: Chart Container Styling for Canvas */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+            background: #ffffff;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e0d8;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Math/Equation Styling */
+        .equation-box {
+            background-color: #f4efea;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            font-weight: bold;
+            margin: 1rem 0;
+            border: 1px solid #e5e0d8;
+        }
+
+        /* Custom Scrollbar for inner elements */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fcfbf9; }
+        ::-webkit-scrollbar-thumb { background: #dcd6ce; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8b1a8; }
+        
+        /* Thermal stack transition */
+        .thermal-layer { transition: all 0.3s ease; }
+        .thermal-layer:hover { transform: scale(1.02); filter: brightness(1.05); }
+    </style>
+</head>
+<body class="font-sans antialiased h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- Navigation Sidebar -->
+    <nav class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-[#e5e0d8] flex-shrink-0 z-10 flex flex-col h-auto md:h-full shadow-sm">
+        <div class="p-6 border-b border-[#e5e0d8]">
+            <h1 class="text-xl font-bold text-[#3b3a37] tracking-tight">TEG Analysis</h1>
+            <p class="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">Solid-State Physics</p>
+        </div>
+        <ul class="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto flex-grow p-2 md:p-4 gap-1">
+            <li><button onclick="navTab('physics')" id="tab-physics" class="w-full text-left px-4 py-3 rounded text-sm text-gray-700 hover:bg-[#f4efea] active-tab transition-colors whitespace-nowrap md:whitespace-normal">1. Physics & Seebeck</button></li>
+            <li><button onclick="navTab('thermal')" id="tab-thermal" class="w-full text-left px-4 py-3 rounded text-sm text-gray-700 hover:bg-[#f4efea] transition-colors whitespace-nowrap md:whitespace-normal">2. Thermal Circuit</button></li>
+            <li><button onclick="navTab('materials')" id="tab-materials" class="w-full text-left px-4 py-3 rounded text-sm text-gray-700 hover:bg-[#f4efea] transition-colors whitespace-nowrap md:whitespace-normal">3. Material Science (ZT)</button></li>
+            <li><button onclick="navTab('power')" id="tab-power" class="w-full text-left px-4 py-3 rounded text-sm text-gray-700 hover:bg-[#f4efea] transition-colors whitespace-nowrap md:whitespace-normal">4. Power & MPPT</button></li>
+            <li><button onclick="navTab('failures')" id="tab-failures" class="w-full text-left px-4 py-3 rounded text-sm text-gray-700 hover:bg-[#f4efea] transition-colors whitespace-nowrap md:whitespace-normal">5. Failure Modes</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow overflow-y-auto p-4 md:p-10 relative">
+        <div class="max-w-4xl mx-auto pb-20">
+
+            <!-- VIEW 1: Physics & Seebeck -->
+            <section id="view-physics" class="block animate-fade-in">
+                <header class="mb-8">
+                    <h2 class="text-3xl font-bold mb-2">The Seebeck Effect & Charge Carrier Dynamics</h2>
+                    <div class="mb-6 rounded-lg overflow-hidden">
+                        <img src="https://www.researchgate.net/publication/354014934/figure/fig1/AS:1058826094649344@1629455221599/Structure-of-a-thermoelectric-module.jpg" 
+                             alt="Thermoelectric Module Operation" 
+                             class="w-full h-auto object-cover rounded-lg"
+                             onerror="this.src='https://via.placeholder.com/600x300/d27c65/ffffff?text=Thermoelectric+Module+Operation'">
+                        <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                            Thermoelectric module showing hot and cold sides with heat sink assembly
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        This section explores the quantum mechanical foundation of Thermoelectric Generators. By interacting with the simulator below, you will see how macroscopic temperature gradients dictate the Fermi-Dirac distribution, driving charge diffusion and generating electromotive force (EMF).
+                    </p>
+                </header>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-[#e5e0d8] mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Core Principle</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        The Seebeck effect describes the induction of a continuous electromotive force (EMF) under a temperature gradient (&nabla;T). In heavily doped semiconductors, elevated thermal energy at the hot junction excites majority carriers (electrons in n-type, holes in p-type), driving isotropic diffusion toward the cold junction.
+                    </p>
+                    <div class="equation-box text-lg">
+                        V<sub>oc</sub> &approx; S<sub>pn</sub> &times; &Delta;T
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2 text-center">Where S<sub>pn</sub> is the relative Seebeck coefficient, and &Delta;T is the temperature difference.</p>
+                </div>
+
+                <!-- Interactive Seebeck Simulator -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-[#e5e0d8]">
+                    <h3 class="text-xl font-semibold mb-4 border-b pb-2">Interactive Carrier Dynamics Simulator</h3>
+                    <p class="text-sm text-gray-600 mb-6">Adjust the Hot Junction temperature to observe the resulting open-circuit voltage based on a standard Bi<sub>2</sub>Te<sub>3</sub> Seebeck coefficient.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-6 items-center">
+                        <div class="w-full md:w-1/2 space-y-6">
+                            <div>
+                                <label class="flex justify-between text-sm font-bold text-gray-700 mb-1">
+                                    <span>Hot Junction (T<sub>h</sub>)</span>
+                                    <span id="th-display" class="accent-text font-mono">100 &deg;C</span>
+                                </label>
+                                <input type="range" id="th-slider" min="30" max="250" value="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#d27c65]">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-sm font-bold text-gray-700 mb-1">
+                                    <span>Cold Junction (T<sub>c</sub>) Fixed</span>
+                                    <span class="text-[#6d8e9e] font-mono">30 &deg;C</span>
+                                </label>
+                                <div class="w-full h-2 bg-gray-200 rounded-lg relative overflow-hidden">
+                                    <div class="absolute left-0 top-0 h-full cold-bg w-full opacity-50"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/2 bg-[#f4efea] p-6 rounded-lg flex flex-col items-center justify-center border border-[#e5e0d8] relative overflow-hidden">
+                            <!-- Visual representation of gradient -->
+                            <div class="absolute inset-0 opacity-10" id="gradient-bg" style="background: linear-gradient(to right, #d27c65, #6d8e9e);"></div>
+                            <span class="text-sm text-gray-500 uppercase tracking-widest mb-2 relative z-10">Generated V<sub>oc</sub></span>
+                            <span id="voc-display" class="text-4xl font-bold text-gray-800 font-mono relative z-10">0.00 V</span>
+                            <div class="mt-4 flex gap-4 text-xs font-mono text-gray-500 relative z-10">
+                                <span>&Delta;T: <span id="dt-display">70</span> &deg;C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: Thermal Circuit -->
+            <section id="view-thermal" class="hidden animate-fade-in">
+                <header class="mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Thermal Resistance Network Analysis</h2>
+                    <div class="mb-6 rounded-lg overflow-hidden">
+                        <img src="https://i.pinimg.com/736x/79/14/9c/79149c6e81a8626774fa9ae9c80fedd0.jpg" 
+                             alt="Thermal Circuit Assembly" 
+                             class="w-full h-auto object-cover rounded-lg"
+                             onerror="this.src='https://via.placeholder.com/600x300/d27c65/ffffff?text=Thermal+Circuit+Assembly'">
+                        <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                            Complete thermal circuit assembly with heat sink, fan, and TEG module
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        This interactive model visualizes the 1D thermal resistance network governing TEG performance. Each layer represents a distinct thermal bottleneck. Hover over layers to reveal their resistance values and understand how they cascade to determine overall heat rejection capability.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-[#e5e0d8]">
+                        <h3 class="text-xl font-semibold mb-4">Heat Flux Equations</h3>
+                        <p class="mb-4 text-gray-700 text-sm leading-relaxed">
+                            A TEG is a complex thermal resistance network. The heat absorbed at the hot junction (Q<sub>h</sub>) and rejected at the cold junction (Q<sub>c</sub>) dynamically change based on electrical load due to Peltier heating and Joule heating.
+                        </p>
+                        <div class="equation-box text-sm">
+                            Q<sub>h</sub> = S<sub>pn</sub> I T<sub>h</sub> + K<sub>TEG</sub> &Delta;T - &frac12; I<sup>2</sup> R<sub>int</sub><br><br>
+                            Q<sub>c</sub> = S<sub>pn</sub> I T<sub>c</sub> + K<sub>TEG</sub> &Delta;T + &frac12; I<sup>2</sup> R<sub>int</sub>
+                        </div>
+                        <p class="text-sm text-gray-700 mt-4 leading-relaxed">
+                            If the heat sink's thermal resistance (R<sub>sink</sub>) is too high, T<sub>c</sub> rapidly rises, collapsing &Delta;T and halting power generation.
+                        </p>
+                    </div>
+
+                    <!-- Interactive Thermal Stack Diagram -->
+                    <div class="bg-[#fcfbf9] p-6 rounded-lg border border-[#e5e0d8] flex flex-col justify-center items-center">
+                        <h3 class="text-sm uppercase tracking-widest text-gray-500 font-bold mb-4 w-full text-center">Interactive 1D Thermal Resistance Network</h3>
+                        <p class="text-xs text-gray-400 mb-4">Hover over layers to inspect</p>
+                        
+                        <div class="w-full max-w-xs space-y-1 relative" id="thermal-stack">
+                            <div class="thermal-layer w-full h-12 accent-bg text-white flex items-center justify-center font-bold rounded-t shadow-sm cursor-pointer" onmouseover="updateThermalInfo('Source')" onmouseout="clearThermalInfo()">T<sub>h</sub> Heat Source</div>
+                            <div class="thermal-layer w-full h-4 bg-gray-300 text-gray-600 text-xs flex items-center justify-center cursor-pointer" onmouseover="updateThermalInfo('TIM1')" onmouseout="clearThermalInfo()">TIM 1 (Paste)</div>
+                            <div class="thermal-layer w-full h-20 bg-stone-700 text-white flex flex-col items-center justify-center text-sm font-bold relative overflow-hidden cursor-pointer" onmouseover="updateThermalInfo('TEG')" onmouseout="clearThermalInfo()">
+                                <div class="absolute left-0 w-full flex justify-between px-2 opacity-30 text-[10px]">
+                                    <span>P</span><span>N</span><span>P</span><span>N</span><span>P</span><span>N</span>
+                                </div>
+                                TEG Module
+                            </div>
+                            <div class="thermal-layer w-full h-4 bg-gray-300 text-gray-600 text-xs flex items-center justify-center cursor-pointer" onmouseover="updateThermalInfo('TIM2')" onmouseout="clearThermalInfo()">TIM 2 (Paste)</div>
+                            <div class="thermal-layer w-full h-16 cold-bg text-white flex flex-col items-center justify-center font-bold rounded-b shadow-sm cursor-pointer" onmouseover="updateThermalInfo('Sink')" onmouseout="clearThermalInfo()">
+                                <span>Heat Sink</span>
+                                <span class="text-[10px] font-normal">&darr; Q<sub>c</sub> Rejected</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 h-24 w-full bg-white border border-[#e5e0d8] rounded p-3 text-sm text-gray-700">
+                            <strong id="thermal-title" class="block mb-1 text-gray-900">Total System Resistance</strong>
+                            <span id="thermal-desc">Hover over a layer in the stack above to view its specific impact on the thermal gradient and &Delta;T losses.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: Material Science (ZT) -->
+            <section id="view-materials" class="hidden animate-fade-in">
+                <header class="mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Material Efficiency & Figure of Merit (ZT)</h2>
+                    <div class="mb-6 rounded-lg overflow-hidden">
+                        <img src="https://th.bing.com/th/id/R.e9454f7ed82540753953511e9bfcc7e7?rik=4k4rKxDOo%2bqlCg&riu=http%3a%2f%2fthermoelectrics.matsci.northwestern.edu%2fgraphics%2fthermoelectrics%2fp-zT-Big.jpg&ehk=VQ7XERY6aX9iwoSKzoKvrI%2fkrN%2bwjrBzLKXyf8zRZGc%3d&risl=&pid=ImgRaw&r=0" 
+                             alt="Thermoelectric Materials Properties" 
+                             class="w-full h-auto object-cover rounded-lg"
+                             onerror="this.src='https://via.placeholder.com/600x300/d27c65/ffffff?text=Thermoelectric+Materials+Properties'">
+                        <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                            Comparison of thermoelectric materials showing ZT values and temperature dependence
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        The Figure of Merit (ZT) quantifies thermoelectric material efficiency. This section compares different semiconductor materials across temperature regimes and visualizes why Bismuth Telluride (Bi₂Te₃) dominates near-room-temperature applications.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="col-span-1 lg:col-span-2 bg-white p-6 rounded-lg shadow-sm border border-[#e5e0d8]">
+                        <h3 class="text-xl font-semibold mb-3">Decoupling Electron & Phonon Transport</h3>
+                        <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                            The thermodynamic efficiency is bottlenecked by the intrinsic material properties, defined by the dimensionless Figure of Merit (ZT).
+                        </p>
+                        <div class="equation-box text-lg mb-4">
+                            ZT = (S<sup>2</sup> &sigma; T) / &kappa;<sub>total</sub>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed">
+                            An optimal material requires high electrical conductivity (&sigma;) and low thermal conductivity (&kappa;). Modern engineering focuses on <strong>Phonon Glass-Electron Crystal (PGEC)</strong> paradigms, introducing nanostructural defects to scatter acoustic phonons without impeding charge carriers.
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-[#e5e0d8]">
+                        <h3 class="text-lg font-semibold mb-3">Material Regimes</h3>
+                        <ul class="space-y-4 text-sm">
+                            <li class="border-l-4 border-gray-300 pl-3">
+                                <strong class="block text-gray-800">Low-Temp (&lt;200&deg;C)</strong>
+                                <span class="text-gray-600">Bismuth Telluride (Bi<sub>2</sub>Te<sub>3</sub>)</span>
+                            </li>
+                            <li class="border-l-4 accent-bg border-opacity-50 pl-3">
+                                <strong class="block text-gray-800">Mid-Temp (200-600&deg;C)</strong>
+                                <span class="text-gray-600">Lead Telluride (PbTe), Skutterudites</span>
+                            </li>
+                            <li class="border-l-4 border-red-500 border-opacity-50 pl-3">
+                                <strong class="block text-gray-800">High-Temp (&gt;600&deg;C)</strong>
+                                <span class="text-gray-600">Silicon-Germanium (SiGe) for RTGs</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Material Efficiency Chart -->
+                <div class="chart-container">
+                    <canvas id="materialsChart"></canvas>
+                </div>
+            </section>
+
+            <!-- VIEW 4: Power & MPPT -->
+            <section id="view-power" class="hidden animate-fade-in">
+                <header class="mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Maximum Power Point & Load Matching</h2>
+                    <div class="mb-6 rounded-lg overflow-hidden">
+                        <img src="https://thermoelectric-generator.com/wp-content/uploads/2020/05/TEG-thermoelectric-generator-100w-wood-stove.jpg" 
+                             alt="Industrial TEG System" 
+                             class="w-full h-auto object-cover rounded-lg"
+                             onerror="this.src='https://via.placeholder.com/600x300/d27c65/ffffff?text=Industrial+TEG+System'">
+                        <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                            Industrial thermoelectric generator system with wood stove heat source
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        This section demonstrates the critical power matching principle. Maximum power transfer occurs when TEG internal resistance equals load resistance (R_load = R_int). The interactive curve proves Jacobi's Law and shows how mismatched loads severely degrade power extraction.
+                    </p>
+                </header>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-[#e5e0d8] mb-8">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="w-full md:w-1/2">
+                            <h3 class="text-xl font-semibold mb-3">Jacobi's Law & Impedance Matching</h3>
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                A TEG is a non-ideal voltage source with internal resistance R<sub>int</sub>. To extract maximum power, external load resistance R<sub>load</sub> must strictly equal R<sub>int</sub>.
+                            </p>
+                            <div class="equation-box text-sm">
+                                P<sub>max</sub> = V<sub>oc</sub><sup>2</sup> / (4 R<sub>int</sub>)
+                            </div>
+                        </div>
+                        <div class="w-full md:w-1/2">
+                            <h3 class="text-xl font-semibold mb-3">Power Conditioning</h3>
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                Because V<sub>oc</sub> fluctuates (0.5V to 4V), direct connection to a load is inefficient. Systems use <strong>Ultra-Low-Voltage DC-DC Boost Converters</strong> with Maximum Power Point Tracking (MPPT). Using <em>Perturb and Observe (P&O)</em> algorithms, the converter adjusts input impedance to constantly track the peak of the power curve shown below.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MPPT Power Curve Chart -->
+                <div class="chart-container">
+                    <canvas id="powerChart"></canvas>
+                </div>
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-500 font-mono">Simulated TEG: V<sub>oc</sub> = 2.0V, R<sub>int</sub> = 4.0 &Omega;</p>
+                </div>
+            </section>
+
+            <!-- VIEW 5: Failure Modes -->
+            <section id="view-failures" class="hidden animate-fade-in">
+                <header class="mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Failure Modes & Reliability Analysis</h2>
+                    <div class="mb-6 rounded-lg overflow-hidden">
+                        <img src="https://www.sciencedirect.com/science/article/pii/S266714172300040X" 
+                             alt="TEG Failure Analysis" 
+                             class="w-full h-auto object-cover rounded-lg"
+                             onerror="this.src='https://via.placeholder.com/600x300/d27c65/ffffff?text=TEG+Failure+Analysis'">
+                        <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                            Research analysis of thermoelectric generator failure modes and degradation mechanisms
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        Understanding failure mechanisms is crucial for reliable TEG deployment. This section covers thermal fatigue, material degradation, and electrical contact failures that limit operational lifetime and efficiency.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Card 1 -->
+                    <div class="bg-white border border-[#e5e0d8] rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-4 font-serif font-bold text-[#d27c65]">01</div>
+                        <h3 class="text-lg font-bold mb-2 text-gray-800">Thermal Contact Resistance (R<sub>tc</sub>)</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Macroscopic surface roughness creates micro-voids of trapped air (an insulator). High-performance TIMs (micron-silver paste, liquid metal) and specific compressive clamping loads (150-300 kPa) are mandatory to minimize R<sub>tc</sub> and prevent severe &Delta;T degradation across pellets.
+                        </p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-white border border-[#e5e0d8] rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-4 font-serif font-bold text-[#d27c65]">02</div>
+                        <h3 class="text-lg font-bold mb-2 text-gray-800">Thermal Degradation Limits</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Standard Bi<sub>2</sub>Te<sub>3</sub> TECs use Bismuth-Tin (BiSn) solders with a eutectic melting point around 138&deg;C. Exposure to high-grade heat (&gt;150&deg;C) causes rapid solder reflow and dopant diffusion, permanently destroying the module's internal semiconductor junctions.
+                        </p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-white border border-[#e5e0d8] rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+                        <div class="text-3xl mb-4 font-serif font-bold text-[#d27c65]">03</div>
+                        <h3 class="text-lg font-bold mb-2 text-gray-800">Thermomechanical Fatigue</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            The hot side expands while the cold side contracts, creating massive shear stresses due to Coefficient of Thermal Expansion (CTE) mismatch between ceramic plates and Telluride pellets. Over thousands of cycles, micro-cracking increases R<sub>int</sub> until the module open-circuits.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // --- Navigation Logic ---
+        function navTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('main > div > section').forEach(sec => sec.classList.add('hidden'));
+            // Remove active classes from nav
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active-tab'));
+            
+            // Show target section and activate nav
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('active-tab');
+
+            // Trigger chart renders if needed based on visibility
+            if(tabId === 'materials' && !materialsChartInstance) renderMaterialsChart();
+            if(tabId === 'power' && !powerChartInstance) renderPowerChart();
+        }
+
+        // --- View 1: Seebeck Simulator Logic ---
+        const thSlider = document.getElementById('th-slider');
+        const thDisplay = document.getElementById('th-display');
+        const vocDisplay = document.getElementById('voc-display');
+        const dtDisplay = document.getElementById('dt-display');
+        const gradBg = document.getElementById('gradient-bg');
+        
+        const Tc = 30; // Fixed cold side
+        const Spn = 0.04; // Approximation for Bi2Te3 array to yield a realistic voltage curve
+
+        thSlider.addEventListener('input', (e) => {
+            const Th = parseInt(e.target.value);
+            thDisplay.innerHTML = `${Th} &deg;C`;
+            
+            const deltaT = Th - Tc;
+            // Prevent negative deltaT for simplicity of this specific visualization
+            const effectiveDt = Math.max(0, deltaT); 
+            
+            dtDisplay.innerText = effectiveDt;
+            
+            const Voc = (Spn * effectiveDt).toFixed(2);
+            vocDisplay.innerText = `${Voc} V`;
+
+            // Adjust background gradient visually
+            const hotIntensity = Math.min(100, (Th / 250) * 100);
+            gradBg.style.background = `linear-gradient(to right, rgba(210, 124, 101, ${hotIntensity/100}), rgba(109, 142, 158, 0.2))`;
+        });
+
+        // --- View 2: Thermal Circuit Logic ---
+        const thermalData = {
+            'Source': { title: 'Heat Source (Th)', desc: 'The absolute temperature of the external heat application. Must overcome R_TIM1 to transfer flux into the module.' },
+            'TIM1': { title: 'Thermal Interface Material 1', desc: 'Crucial for eliminating microscopic air gaps. Poor TIM application creates high Thermal Contact Resistance (R_tc), causing a massive temperature drop before heat even reaches the pellets.' },
+            'TEG': { title: 'TEG Module (Bi2Te3 Pellets)', desc: 'The active conversion layer. The true delta-T across this layer dictates power output. High thermal conductivity here is undesirable as it shorts out the delta-T.' },
+            'TIM2': { title: 'Thermal Interface Material 2', desc: 'Couples the ceramic substrate to the heat sink. High resistance here forces the cold junction temperature (Tc) to rise.' },
+            'Sink': { title: 'Heat Sink / Dissipator', desc: 'Must continuously dissipate Fourier conduction and rejected Joule heat to ambient air. If R_sink is high, the cold side heats up, destroying the Delta-T.' }
+        };
+
+        function updateThermalInfo(layer) {
+            document.getElementById('thermal-title').innerText = thermalData[layer].title;
+            document.getElementById('thermal-desc').innerText = thermalData[layer].desc;
+        }
+
+        function clearThermalInfo() {
+            document.getElementById('thermal-title').innerText = 'Total System Resistance';
+            document.getElementById('thermal-desc').innerText = 'Hover over a layer in the stack above to view its specific impact on the thermal gradient and \u0394T losses.';
+        }
+
+        // --- Chart Configurations ---
+        let materialsChartInstance = null;
+        let powerChartInstance = null;
+
+        // Shared styling variables
+        const fontConfig = { family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif" };
+        const gridConfig = { color: '#e5e0d8', tickLength: 0 };
+
+        function renderMaterialsChart() {
+            const ctx = document.getElementById('materialsChart').getContext('2d');
+            materialsChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Bismuth Telluride (<200°C)', 'Lead Telluride (200-600°C)', 'Silicon-Germanium (>600°C)'],
+                    datasets: [{
+                        label: 'Theoretical Max Efficiency (%)',
+                        data: [6, 8, 10],
+                        backgroundColor: ['#6d8e9e', '#d27c65', '#a64d3c'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return `Efficiency: ~${context.parsed.y}%`; }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 12,
+                            grid: gridConfig,
+                            title: { display: true, text: 'Max Conversion Efficiency (\u03B7)', font: fontConfig }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { 
+                                font: fontConfig,
+                                callback: function(value) {
+                                    // Label wrapping logic (approx 16 char)
+                                    const label = this.getLabelForValue(value);
+                                    return label.split(' ('); 
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPowerChart() {
+            const ctx = document.getElementById('powerChart').getContext('2d');
+            
+            // Generate Parabola data (P = I^2 * R)
+            const Voc = 2.0;
+            const Rint = 4.0;
+            const dataPoints = [];
+            
+            for(let Rload = 0.5; Rload <= 10; Rload += 0.5) {
+                const I = Voc / (Rint + Rload);
+                const P = (I * I) * Rload;
+                dataPoints.push({ x: Rload, y: P });
+            }
+
+            powerChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Power Output (W)',
+                        data: dataPoints,
+                        borderColor: '#d27c65',
+                        backgroundColor: 'rgba(210, 124, 101, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: function(context) {
+                            var index = context.dataIndex;
+                            return index === 7 ? '#3b3a37' : '#d27c65'; // Highlight max power point
+                        },
+                        pointRadius: function(context) {
+                            var index = context.dataIndex;
+                            return index === 7 ? 6 : 0; // Only show peak dot
+                        },
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return `Power: ${context.parsed.y.toFixed(3)} W`; },
+                                title: function(context) { return `R_load: ${context[0].parsed.x} \u03A9`; }
+                            }
+                        },
+                        annotation: { /* Could use plugin, using hack via pointRadius above */ }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: 'External Load Resistance (R_load) [\u03A9]', font: fontConfig },
+                            grid: { display: false },
+                            ticks: { stepSize: 1 }
+                        },
+                        y: {
+                            title: { display: true, text: 'Electrical Power (W)', font: fontConfig },
+                            grid: gridConfig,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize Simulator value display on load
+        thSlider.dispatchEvent(new Event('input'));
+    </script>
+</body>
+</html>

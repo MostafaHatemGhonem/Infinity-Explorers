@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stirling Engine Analysis Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Warm Neutrals & Engineering Accents (Off-White bg, Slate text, Teal/Rust accents) -->
+    <!-- Application Structure Plan: A single-page interactive dashboard divided into functional sections: 1. Architecture Overview (Grid of components for quick familiarization), 2. Thermodynamic Cycle (Interactive P-V diagram with clickable phases to map physical actions to thermodynamic states), 3. Kinematics & Schmidt Analysis (Dynamic slider-driven volume chart to visualize phase angles), 4. Performance & Fluids (Comparative bar chart to understand material choices). This structure is chosen to guide the user from physical components to ideal theory, then to real-world continuous kinematics, and finally to optimization materials. -->
+    <!-- Visualization & Content Choices: 1. Components -> Goal: Inform -> Interactive Cards -> Easy scanning. 2. Ideal Cycle -> Goal: Change/Process -> Line Chart (P-V) with interactive state toggles -> Connects abstract math to physical phases. 3. Schmidt Analysis -> Goal: Relationships -> Line Chart (Volumes vs Crank Angle) with Slider for Phase Angle -> Visually demonstrates overlapping phases and continuous motion. 4. Fluids -> Goal: Compare -> Bar Chart (Conductivity vs Viscosity) -> Clear visual distinction of fluid properties. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { background-color: #FAF9F6; color: #1E293B; font-family: system-ui, -apple-system, sans-serif; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 400px; max-width: 800px; }
+        }
+        .phase-card.active { border-color: #0F766E; background-color: #F0FDFA; }
+        .equation { font-family: 'Courier New', Courier, monospace; background: #F1F5F9; padding: 0.5rem; border-radius: 0.375rem; display: inline-block; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2 font-bold text-xl tracking-wide">
+                    <span>&#9881;</span> Stirling Dynamics
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4 text-sm">
+                        <a href="#overview" class="hover:bg-slate-700 px-3 py-2 rounded-md">Architecture</a>
+                        <a href="#cycle" class="hover:bg-slate-700 px-3 py-2 rounded-md">Ideal Cycle</a>
+                        <a href="#kinematics" class="hover:bg-slate-700 px-3 py-2 rounded-md">Schmidt Kinematics</a>
+                        <a href="#fluids" class="hover:bg-slate-700 px-3 py-2 rounded-md">Working Fluids</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Thermodynamic & Kinematic Analysis of the Stirling Engine</h1>
+        <p class="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            An interactive exploration of the external combustion heat engine operating on a closed, regenerative thermodynamic cycle. Discover how it achieves a net conversion of thermal energy into mechanical work through cyclically compressing and expanding a gaseous working fluid.
+        </p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-24">
+
+        <section id="overview" class="scroll-mt-20">
+            <div class="mb-8 border-b border-slate-200 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800">1. Architectural Components & Configurations</h2>
+                <div class="mb-6 rounded-lg overflow-hidden">
+                    <img src="https://th.bing.com/th/id/R.7939444f123a92202c9eae9fa7606d8d?rik=CgilpzQ%2bx2JXyA&pid=ImgRaw&r=0" 
+                         alt="Stirling Engine Configurations" 
+                         class="w-full h-auto object-cover rounded-lg"
+                         onerror="this.src='https://via.placeholder.com/600x300/0F766E/ffffff?text=Stirling+Engine+Configurations'">
+                    <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                        Alpha, Beta, and Gamma Stirling engine configurations showing mechanical differences
+                    </div>
+                </div>
+                <p class="mt-4 text-slate-600">
+                    This section breaks down the physical architecture of a Stirling engine. Understanding these control volumes and kinematic linkages is essential before analyzing the thermodynamics. The engine consists of coupled thermal spaces, a fluid shuttling mechanism, and energy extraction/storage components.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-3 text-red-600">&#128293;</div>
+                    <h3 class="text-xl font-bold mb-2">Hot Chamber (V<sub>E</sub>)</h3>
+                    <p class="text-sm text-slate-600">The high-temperature reservoir expansion space. External heat (Q<sub>in</sub>) expands the gas here, performing positive boundary work.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-3 text-blue-500">&#10052;</div>
+                    <h3 class="text-xl font-bold mb-2">Cold Chamber (V<sub>C</sub>)</h3>
+                    <p class="text-sm text-slate-600">The low-temperature sink compression space. Heat rejection (Q<sub>out</sub>) occurs here, minimizing required work input during compression.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-3 text-slate-500">&#8644;</div>
+                    <h3 class="text-xl font-bold mb-2">The Displacer</h3>
+                    <p class="text-sm text-slate-600">Found in Beta & Gamma types. Shuttles fluid between hot/cold chambers with negligible pressure differential (&Delta;P &approx; 0).</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-3 text-slate-700">&#9881;</div>
+                    <h3 class="text-xl font-bold mb-2">Power Piston</h3>
+                    <p class="text-sm text-slate-600">Seals the fluid and acts as the mechanical interface. Driven by instantaneous uniform pressure P(t). Net work: <span class="equation text-xs">W = &oint; P dV</span></p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-3 text-amber-500">&#11118;</div>
+                    <h3 class="text-xl font-bold mb-2">Flywheel</h3>
+                    <p class="text-sm text-slate-600">Kinematic energy storage. Acts as a mechanical low-pass filter, storing kinetic energy (E<sub>k</sub> = &frac12;I&omega;&sup2;) to drive compression phases.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 bg-slate-50">
+                    <h3 class="text-lg font-bold mb-2 text-slate-800">Configurations</h3>
+                    <ul class="text-sm text-slate-600 space-y-2 list-disc pl-4">
+                        <li><strong>Alpha:</strong> Two independent power pistons.</li>
+                        <li><strong>Beta:</strong> Displacer & power piston in same cylinder.</li>
+                        <li><strong>Gamma:</strong> Displacer & power piston in separate cylinders.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="cycle" class="scroll-mt-20 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+            <div class="mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800">2. Ideal Thermodynamic Cycle (P-V Diagram)</h2>
+                <div class="mb-6 rounded-lg overflow-hidden">
+                    <img src="https://www.theengineerspost.com/wp-content/uploads/2019/09/p-v-and-T-s-diagram-of-a-Stirling-Cycle.png" 
+                         alt="Stirling Cycle P-V Diagram" 
+                         class="w-full h-auto object-cover rounded-lg"
+                         onerror="this.src='https://via.placeholder.com/600x300/0F766E/ffffff?text=Stirling+Cycle+P-V+Diagram'">
+                    <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                        Idealized P-V diagram illustrating the four phases of the Stirling cycle
+                    </div>
+                </div>
+                <p class="mt-4 text-slate-600">
+                    This section maps the four idealized phases of the Stirling cycle onto a Pressure-Volume (P-V) diagram. Click through the phases below to see the corresponding mathematical formulation, physical action, and how it translates to the thermodynamic state change on the chart.
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
+                <div class="w-full lg:w-1/3 space-y-3" id="phase-buttons">
+                    <button data-phase="1" class="phase-btn w-full text-left p-4 rounded-lg border-2 border-slate-200 hover:border-teal-600 transition-colors bg-white">
+                        <div class="font-bold text-lg text-slate-800">Phase 1: Isochoric Heating</div>
+                        <div class="text-sm text-slate-500">State 4 &rarr; 1</div>
+                    </button>
+                    <button data-phase="2" class="phase-btn w-full text-left p-4 rounded-lg border-2 border-slate-200 hover:border-teal-600 transition-colors bg-white">
+                        <div class="font-bold text-lg text-slate-800">Phase 2: Isothermal Expansion</div>
+                        <div class="text-sm text-slate-500">State 1 &rarr; 2</div>
+                    </button>
+                    <button data-phase="3" class="phase-btn w-full text-left p-4 rounded-lg border-2 border-slate-200 hover:border-teal-600 transition-colors bg-white">
+                        <div class="font-bold text-lg text-slate-800">Phase 3: Isochoric Cooling</div>
+                        <div class="text-sm text-slate-500">State 2 &rarr; 3</div>
+                    </button>
+                    <button data-phase="4" class="phase-btn w-full text-left p-4 rounded-lg border-2 border-slate-200 hover:border-teal-600 transition-colors bg-white active border-teal-600 bg-teal-50" id="default-phase">
+                        <div class="font-bold text-lg text-slate-800">Phase 4: Isothermal Compression</div>
+                        <div class="text-sm text-slate-500">State 3 &rarr; 4</div>
+                    </button>
+
+                    <div class="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">System Efficiency</h4>
+                        <p class="text-xs text-slate-600 mb-2">Assuming 100% regenerator effectiveness, matches Carnot limit:</p>
+                        <div class="equation text-sm w-full text-center">&eta;<sub>th</sub> = 1 - (T<sub>C</sub> / T<sub>H</sub>)</div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-2/3 flex flex-col">
+                    <div class="chart-container mb-6">
+                        <canvas id="pvChart"></canvas>
+                    </div>
+                    <div id="phase-details" class="bg-teal-50 border-l-4 border-teal-600 p-5 rounded-r-lg min-h-[140px]">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kinematics" class="scroll-mt-20">
+            <div class="mb-8 border-b border-slate-200 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800">3. Advanced Kinematics: Schmidt Isothermal Analysis</h2>
+                <div class="mb-6 rounded-lg overflow-hidden">
+                    <img src="https://th.bing.com/th/id/R.e0ddc98b3c9eadd718da9ca66e98f3c1?rik=hD99uCdgvb%2bG1w&pid=ImgRaw&r=0" 
+                         alt="Stirling Engine Displacer Mechanism" 
+                         class="w-full h-auto object-cover rounded-lg"
+                         onerror="this.src='https://via.placeholder.com/600x300/0F766E/ffffff?text=Displacer+Piston+Mechanism'">
+                    <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                        Conceptual diagram showing displacer piston mechanism and gas shuttling
+                    </div>
+                </div>
+                <p class="mt-4 text-slate-600">
+                    In reality, piston motion is harmonic (sinusoidal), causing isochoric and isothermal phases to overlap. The Schmidt Analysis models these continuous volume changes based on the crank angle (&theta;). Use the slider below to adjust the phase angle (&alpha;) between the expansion and compression spaces to see its effect on the total system volume.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col lg:flex-row gap-8">
+                <div class="w-full lg:w-1/3 flex flex-col justify-center">
+                    <label for="phaseSlider" class="block text-sm font-bold text-slate-700 mb-2">Phase Angle Lead (&alpha;): <span id="alphaValue" class="text-teal-700 text-lg">90</span>&deg;</label>
+                    <input type="range" id="phaseSlider" min="0" max="180" value="90" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mb-6 accent-teal-600">
+                    
+                    <div class="space-y-4 text-sm text-slate-600">
+                        <p><strong>V<sub>E</sub>(&theta;)</strong> = (V<sub>SE</sub>/2) * (1 - cos&theta;)</p>
+                        <p><strong>V<sub>C</sub>(&theta;)</strong> = (V<sub>SC</sub>/2) * (1 - cos(&theta; - &alpha;))</p>
+                        <p><strong>Total Mass (m)</strong> is constant, applying ideal gas law across all internal volumes enables solving for instantaneous pressure P(&theta;), generating an elliptical, real-world P-V diagram.</p>
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-2/3">
+                    <div class="chart-container">
+                        <canvas id="schmidtChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fluids" class="scroll-mt-20 bg-slate-800 text-slate-100 p-6 md:p-8 rounded-2xl shadow-lg">
+            <div class="mb-8 border-b border-slate-600 pb-4">
+                <h2 class="text-3xl font-bold text-white">4. Regenerator & Working Fluid Thermophysics</h2>
+                <p class="mt-4 text-slate-300">
+                    Engine power density and efficiency rely heavily on the thermal capacitor (Regenerator) and the thermophysical properties of the working fluid. This section compares standard fluid choices.
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="w-full lg:w-1/2 space-y-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-teal-400 mb-2">The Regenerator Matrix</h3>
+                        <p class="text-sm leading-relaxed text-slate-300">
+                            Absorbs heat during isochoric cooling and returns it during heating. Thermal effectiveness (&epsilon;) dictates efficiency. If &epsilon; < 1, external heat must bridge the gap, degrading efficiency. Increasing density improves &epsilon; but increases aerodynamic flow friction (&Delta;P<sub>drop</sub>) and dead volume (V<sub>R</sub>).
+                        </p>
+                        <div class="equation text-xs mt-3 bg-slate-900 text-slate-300 border border-slate-700">
+                            &epsilon; = (T<sub>fluid,out</sub> - T<sub>fluid,in</sub>) / (T<sub>matrix,max</sub> - T<sub>matrix,min</sub>)
+                        </div>
+                    </div>
+                    
+                    <div class="grid gap-4">
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-bold text-white mb-1">Air</h4>
+                            <p class="text-xs text-slate-300">Convenient, safe. Low thermal conductivity (k), high molar mass. Limits engine to low speeds due to severe flow losses.</p>
+                        </div>
+                        <div class="bg-slate-700 p-4 rounded-lg border-l-4 border-red-500">
+                            <h4 class="font-bold text-white mb-1">Hydrogen (H<sub>2</sub>)</h4>
+                            <p class="text-xs text-slate-300">Thermodynamically ideal. Lowest viscosity (&mu;), highest thermal conductivity. High diffusivity causes embrittlement/leakage, high flammability risks.</p>
+                        </div>
+                        <div class="bg-slate-700 p-4 rounded-lg border-l-4 border-teal-500">
+                            <h4 class="font-bold text-white mb-1">Helium (He)</h4>
+                            <p class="text-xs text-slate-300">Industrial standard. Inert noble gas. High specific heat ratio (&gamma; &approx; 1.66) gives substantial pressure swings for high power density without H<sub>2</sub> risks.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-1/2 flex flex-col justify-center bg-white rounded-xl p-4">
+                    <div class="chart-container">
+                        <canvas id="fluidChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-500 mt-2">Relative Comparison of Key Thermophysical Properties</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-sm border-t border-slate-800">
+        <p>Interactive Stirling Engine Thermodynamic Analysis SPA</p>
+    </footer>
+
+    <script>
+        const PV_DATA = {
+            1: {
+                title: "Phase 1: Isochoric Heating (State 4 \u2192 1)",
+                action: "The fluid is moved from the cold chamber to the hot chamber. The total volume remains constant (V1 = V4).",
+                thermo: "Working fluid passes through regenerator and hot heat exchanger, absorbing thermal energy. T rises to TH, P increases proportionally. W = 0.",
+                equation: "P1 = P4 * (TH / TC)",
+                highlightIndexes: [3, 4] 
+            },
+            2: {
+                title: "Phase 2: Isothermal Expansion (State 1 \u2192 2)",
+                action: "The high pressure drives the power piston outward. The volume increases from V1 to V2.",
+                thermo: "Heat (Qin) continuously supplied to maintain constant max temp (TH). Fluid performs maximum positive boundary work.",
+                equation: "W1-2 = Qin = \u222B P dV = mRT_H ln(V2/V1)",
+                highlightIndexes: [0, 1]
+            },
+            3: {
+                title: "Phase 3: Isochoric Cooling (State 2 \u2192 3)",
+                action: "The fluid is moved back to the cold chamber. The volume remains at maximum (V2 = V3).",
+                thermo: "Fluid transfers thermal energy to regenerator. Temp drops from TH to TC, causing a dramatic pressure drop. W = 0.",
+                equation: "W2-3 = 0",
+                highlightIndexes: [1, 2]
+            },
+            4: {
+                title: "Phase 4: Isothermal Compression (State 3 \u2192 4)",
+                action: "The flywheel's momentum drives the power piston inward, compressing fluid from V3 back to V4.",
+                thermo: "Fluid is maintained at TC by rejecting heat (Qout). Compression work is minimized.",
+                equation: "W3-4 = Qout = \u222B P dV = mRT_C ln(V4/V3)",
+                highlightIndexes: [2, 3]
+            }
+        };
+
+        const vMin = 1;
+        const vMax = 4;
+        const pHigh = 10;
+        const pLow = 2;
+
+        function generateIsotherm(vStart, vEnd, pStart, pointsCount) {
+            let pts = [];
+            const k = pStart * vStart; 
+            const step = (vEnd - vStart) / (pointsCount - 1);
+            for (let i = 0; i < pointsCount; i++) {
+                let v = vStart + (i * step);
+                pts.push({x: v, y: k / v});
+            }
+            return pts;
+        }
+
+        const curve1to2 = generateIsotherm(vMin, vMax, pHigh, 20); 
+        const curve3to4 = generateIsotherm(vMax, vMin, pLow, 20); 
+
+        const pvCyclePoints = [
+            {x: vMin, y: pHigh}, 
+            {x: vMax, y: (pHigh*vMin)/vMax}, 
+            {x: vMax, y: pLow}, 
+            {x: vMin, y: (pLow*vMax)/vMin}, 
+            {x: vMin, y: pHigh} 
+        ];
+
+        let pvChartInstance = null;
+        let schmidtChartInstance = null;
+        let fluidChartInstance = null;
+
+        function initPVChart() {
+            const ctx = document.getElementById('pvChart').getContext('2d');
+            pvChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Ideal Cycle',
+                            data: pvCyclePoints,
+                            borderColor: '#cbd5e1',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#64748b',
+                            tension: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Active Phase',
+                            data: [pvCyclePoints[2], pvCyclePoints[3]],
+                            borderColor: '#0F766E',
+                            backgroundColor: 'transparent',
+                            borderWidth: 4,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#0F766E',
+                            tension: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `V: ${context.parsed.x.toFixed(1)}, P: ${context.parsed.y.toFixed(1)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Volume (V)' },
+                            min: 0, max: 5,
+                            ticks: { display: false }
+                        },
+                        y: {
+                            title: { display: true, text: 'Pressure (P)' },
+                            min: 0, max: 12,
+                            ticks: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePVPhase(phaseNum) {
+            const data = PV_DATA[phaseNum];
+            document.querySelectorAll('.phase-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-teal-600', 'bg-teal-50');
+                if (btn.getAttribute('data-phase') === phaseNum.toString()) {
+                    btn.classList.add('active', 'border-teal-600', 'bg-teal-50');
+                }
+            });
+
+            const detailsDiv = document.getElementById('phase-details');
+            detailsDiv.innerHTML = `
+                <h4 class="font-bold text-lg text-teal-800 mb-2">${data.title}</h4>
+                <p class="text-sm text-teal-900 mb-2"><strong>Physical Action:</strong> ${data.action}</p>
+                <p class="text-sm text-teal-900 mb-3"><strong>Thermodynamics:</strong> ${data.thermo}</p>
+                <div class="equation text-sm text-teal-900 bg-teal-100 border-teal-200">${data.equation}</div>
+            `;
+
+            let segmentData = [];
+            if (phaseNum === 2) segmentData = curve1to2;
+            else if (phaseNum === 4) segmentData = curve3to4;
+            else segmentData = [pvCyclePoints[data.highlightIndexes[0]], pvCyclePoints[data.highlightIndexes[1]]];
+
+            pvChartInstance.data.datasets[1].data = segmentData;
+            
+            if(phaseNum === 1 || phaseNum === 3) {
+                 pvChartInstance.data.datasets[1].borderColor = '#b91c1c'; 
+                 pvChartInstance.data.datasets[1].pointBackgroundColor = '#b91c1c';
+            } else {
+                 pvChartInstance.data.datasets[1].borderColor = '#0F766E'; 
+                 pvChartInstance.data.datasets[1].pointBackgroundColor = '#0F766E';
+            }
+
+            pvChartInstance.update();
+        }
+
+        function initSchmidtChart() {
+            const ctx = document.getElementById('schmidtChart').getContext('2d');
+            schmidtChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        { label: 'V_Expansion (VE)', data: [], borderColor: '#dc2626', borderWidth: 2, tension: 0.4, pointRadius: 0 },
+                        { label: 'V_Compression (VC)', data: [], borderColor: '#2563eb', borderWidth: 2, tension: 0.4, pointRadius: 0 },
+                        { label: 'Total Volume (VT)', data: [], borderColor: '#0f766e', borderWidth: 3, tension: 0.4, pointRadius: 0, borderDash: [5, 5] }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Crank Angle \u03B8 (degrees)' } },
+                        y: { title: { display: true, text: 'Volume' }, min: 0 }
+                    }
+                }
+            });
+            updateSchmidtData(90);
+        }
+
+        function updateSchmidtData(alphaDeg) {
+            const labels = [];
+            const dataVE = [];
+            const dataVC = [];
+            const dataVT = [];
+            
+            const vSE = 100;
+            const vSC = 100;
+            const vR = 50; 
+            const alphaRad = alphaDeg * (Math.PI / 180);
+
+            for (let angle = 0; angle <= 360; angle += 5) {
+                labels.push(angle);
+                const thetaRad = angle * (Math.PI / 180);
+                
+                const ve = (vSE / 2) * (1 - Math.cos(thetaRad));
+                const vc = (vSC / 2) * (1 - Math.cos(thetaRad - alphaRad));
+                const vt = ve + vc + vR;
+
+                dataVE.push(ve);
+                dataVC.push(vc);
+                dataVT.push(vt);
+            }
+
+            schmidtChartInstance.data.labels = labels;
+            schmidtChartInstance.data.datasets[0].data = dataVE;
+            schmidtChartInstance.data.datasets[1].data = dataVC;
+            schmidtChartInstance.data.datasets[2].data = dataVT;
+            schmidtChartInstance.update();
+        }
+
+        function initFluidChart() {
+            const ctx = document.getElementById('fluidChart').getContext('2d');
+            fluidChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Air', 'Helium (He)', 'Hydrogen (H2)'],
+                    datasets: [
+                        {
+                            label: 'Relative Thermal Conductivity (k)',
+                            data: [1, 5.8, 6.9], 
+                            backgroundColor: '#0F766E'
+                        },
+                        {
+                            label: 'Relative Dynamic Viscosity (\u03BC)',
+                            data: [2.0, 2.2, 1.0], 
+                            backgroundColor: '#94a3b8'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) { label += context.parsed.y + 'x base'; }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { title: { display: true, text: 'Relative Ratio' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initPVChart();
+            initSchmidtChart();
+            initFluidChart();
+
+            document.querySelectorAll('.phase-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const phase = parseInt(e.currentTarget.getAttribute('data-phase'));
+                    updatePVPhase(phase);
+                });
+            });
+
+            updatePVPhase(4);
+
+            const slider = document.getElementById('phaseSlider');
+            const alphaValDisp = document.getElementById('alphaValue');
+            slider.addEventListener('input', (e) => {
+                const val = e.target.value;
+                alphaValDisp.textContent = val;
+                updateSchmidtData(val);
+            });
+        });
+    </script>
+</body>
+</html>

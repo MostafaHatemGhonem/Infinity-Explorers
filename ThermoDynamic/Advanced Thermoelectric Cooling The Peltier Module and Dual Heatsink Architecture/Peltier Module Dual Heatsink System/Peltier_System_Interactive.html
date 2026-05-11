@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peltier Dual Heatsink System Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 50vh;
+                max-height: 500px;
+            }
+        }
+        .math-block {
+            background-color: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .nav-link.active {
+            background-color: #e2e8f0;
+            border-right: 4px solid #3b82f6;
+            font-weight: 600;
+        }
+        .gradient-hot-cold {
+            background: linear-gradient(90deg, #3b82f6 0%, #cbd5e1 50%, #ef4444 100%);
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #2563eb;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col md:flex-row min-h-screen">
+
+<!-- Chosen Palette: Slate and Blue/Red accents. Background: slate-50, text: slate-900. Accents: blue-500 (cold), red-500 (hot), slate-200 (borders/panels). -->
+<!-- Application Structure Plan: The SPA is designed as an interactive technical dashboard rather than a static document. It features a sticky sidebar for functional navigation. The main content is split into: 1. Executive Overview (Abstract & Physics), 2. Interactive Performance Simulator (Thermodynamics & ZT), 3. Thermal Architecture (Heatsink Networks & Transients), 4. Advanced Systems (Cascades & Parasitics). This flow allows engineers to first understand the core concept, dynamically simulate the module's behavior (the "wow" factor), and then delve into the structural requirements and advanced edge cases. -->
+<!-- Visualization & Content Choices: 1. Peltier Effect: CSS gradient and text toggles to explain physics without SVG. 2. Thermodynamic Equations: Interactive Chart.js Line Chart (Current vs. Heat/Power) driven by user sliders for Delta T and Th, allowing real-time exploration of performance curves and optimization points (Goal: Change/Compare). 3. Cascaded Architecture: Chart.js Stacked Bar chart showing exponential heat rejection growth across stages (Goal: Relationships). 4. Optimization Rules: Clickable interactive cards for clear, actionable takeaways (Goal: Inform). NO SVG or Mermaid used. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <nav class="w-full md:w-64 bg-slate-50 border-r border-slate-200 flex-shrink-0 md:h-screen md:sticky top-0 z-10 flex flex-col">
+        <div class="p-6 border-b border-slate-200">
+            <h1 class="text-xl font-bold text-slate-800 leading-tight">Thermoelectric Systems</h1>
+            <p class="text-sm text-slate-500 mt-2">Dual Heatsink Peltier Architecture</p>
+        </div>
+        <div class="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto flex-grow p-4 gap-2" id="nav-menu">
+            <button data-target="sec-overview" class="nav-link active text-left px-4 py-3 rounded-lg text-sm transition-colors hover:bg-slate-100 whitespace-nowrap md:whitespace-normal">1. System Overview</button>
+            <button data-target="sec-simulator" class="nav-link text-left px-4 py-3 rounded-lg text-sm transition-colors hover:bg-slate-100 whitespace-nowrap md:whitespace-normal">2. Interactive Simulator</button>
+            <button data-target="sec-architecture" class="nav-link text-left px-4 py-3 rounded-lg text-sm transition-colors hover:bg-slate-100 whitespace-nowrap md:whitespace-normal">3. Thermal Architecture</button>
+            <button data-target="sec-advanced" class="nav-link text-left px-4 py-3 rounded-lg text-sm transition-colors hover:bg-slate-100 whitespace-nowrap md:whitespace-normal">4. Cascades & Losses</button>
+            <button data-target="sec-optimization" class="nav-link text-left px-4 py-3 rounded-lg text-sm transition-colors hover:bg-slate-100 whitespace-nowrap md:whitespace-normal">5. Optimization Rules</button>
+        </div>
+    </nav>
+
+    <main class="flex-grow p-6 md:p-12 overflow-y-auto w-full max-w-6xl mx-auto">
+        
+        <section id="sec-overview" class="content-section block animate-fade-in">
+            <div class="mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Abstract and System Overview</h2>
+                <div class="mb-8 rounded-2xl overflow-hidden shadow-lg border-slate-200">
+                    <img src="https://www.meerstetter.ch/images/compendium/TEC_Peltier_Element_Controller_Heatsink_Fan_6175.png" 
+                         alt="Complete Peltier System with Controller and Heatsink" 
+                         class="w-full h-auto object-cover" 
+                         onerror="this.src='https://via.placeholder.com/800x400/3b82f6/ffffff?text=Peltier+System+Overview'">
+                    <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                        Complete thermoelectric cooling system with Peltier module, controller, heatsink and cooling fan
+                    </div>
+                </div>
+                <p class="text-lg text-slate-700 leading-relaxed mb-6">
+                    This document provides a rigorous technical analysis of Thermoelectric Coolers (TECs), commonly known as Peltier modules, integrated into a dual heatsink architecture. A TEC operates as a solid-state active heat pump that transfers heat from one side of the device to the other, against the temperature gradient, via consumption of electrical energy. To maintain steady-state operation and prevent thermal runaway, efficient heat exchangers (heatsinks) must be coupled to both the cold (heat absorption) and hot (heat rejection) junctions.
+                </p>
+                <div class="w-full h-8 gradient-hot-cold rounded-full shadow-inner mb-2"></div>
+                <div class="flex justify-between text-sm font-semibold text-slate-600 px-2">
+                    <span class="text-blue-600">Cold Side (Heat Absorption Q<sub>c</sub>)</span>
+                    <span class="text-red-600">Hot Side (Heat Rejection Q<sub>h</sub>)</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+                <h3 class="text-2xl font-semibold mb-4">Solid-State Physics and Thermoelectric Effects</h3>
+                <p class="mb-6 text-slate-600">The operation of a TEC is governed by three primary interconnected thermoelectric phenomena. Click the tabs below to explore the governing physics and 1D heat diffusion principles.</p>
+                
+                <div class="flex border-b border-slate-200 mb-6" id="physics-tabs">
+                    <button class="tab-btn active px-4 py-2 text-sm font-medium focus:outline-none" data-tab="peltier">The Peltier Effect</button>
+                    <button class="tab-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 focus:outline-none" data-tab="thomson">The Thomson Effect</button>
+                    <button class="tab-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 focus:outline-none" data-tab="fom">Figure of Merit (ZT)</button>
+                </div>
+
+                <div id="tab-content-peltier" class="tab-pane block">
+                    <div class="mb-6 rounded-lg overflow-hidden">
+                        <img src="https://static.electronicsweekly.com/wp-content/uploads/2017/11/29114651/figure-3.jpg" 
+                             alt="Peltier Module Internal Structure" 
+                             class="w-full h-auto object-cover rounded-lg"
+                             onerror="this.src='https://via.placeholder.com/600x300/3b82f6/ffffff?text=Peltier+Module+Structure'">
+                        <div class="bg-slate-100 px-4 py-2 text-sm text-slate-600 text-center">
+                            Cross-section of thermoelectric cooling device showing semiconductor pellets and ceramic plates
+                        </div>
+                    </div>
+                    <p class="text-slate-700 mb-4">The calorimetric manifestation of the Seebeck effect in reverse. It occurs when a direct current (<span class="font-mono text-sm">I</span>) is driven through alternating heavily doped n-type and p-type semiconductor pellets (e.g., Bi<sub>2</sub>Te<sub>3</sub>), wired electrically in series but thermally in parallel.</p>
+                    <div class="math-block font-mono text-sm md:text-base">
+                        Q̇<sub>π</sub> = Π·I = α·T·I
+                    </div>
+                    <ul class="list-disc pl-5 text-slate-600 text-sm space-y-1">
+                        <li><span class="font-semibold text-slate-800">Π</span> : Peltier coefficient (W/A)</li>
+                        <li><span class="font-semibold text-slate-800">α</span> : Seebeck coefficient (V/K)</li>
+                        <li><span class="font-semibold text-slate-800">T</span> : Absolute temperature (K)</li>
+                    </ul>
+                </div>
+
+                <div id="tab-content-thomson" class="tab-pane hidden">
+                    <p class="text-slate-700 mb-4">Continuous absorption or release of heat when current flows through a material possessing a temperature gradient. Incorporating Fourier conduction, Joule heating, and the Thomson effect, the generalized 1-dimensional steady-state heat diffusion equation becomes:</p>
+                    <div class="math-block font-mono text-sm md:text-base">
+                        q̇<sub>τ</sub> = τ·I·(dT/dx)<br><br>
+                        λ·A·(d²T/dx²) - τ·I·(dT/dx) + (I²·ρ)/A = 0
+                    </div>
+                    <p class="text-slate-700 text-sm mt-4 p-3 bg-slate-50 rounded border border-slate-200">
+                        <strong>Crucial finding:</strong> Internal Joule heating is <em>not</em> symmetrically distributed. The Thomson effect shifts the internal thermal peak toward the hot junction, marginally degrading net cooling capacity.
+                    </p>
+                </div>
+
+                <div id="tab-content-fom" class="tab-pane hidden">
+                    <p class="text-slate-700 mb-4">The efficiency of the semiconductor materials is quantified by the dimensionless Figure of Merit (<span class="font-mono text-sm">Z̅T</span>). Modern Bi<sub>2</sub>Te<sub>3</sub> alloys typically exhibit a Z̅T ≈ 1.0 at 300K.</p>
+                    <div class="math-block font-mono text-sm md:text-base">
+                        Z̅T = (α² / (ρ·λ)) · T̅
+                    </div>
+                    <p class="text-slate-700 text-sm mt-4">
+                        High-performance systems require materials that are excellent electrical conductors (low <span class="font-mono">ρ</span> to minimize Joule heating) but poor thermal conductors (low <span class="font-mono">λ</span> to minimize Fourier back-conduction).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-simulator" class="content-section hidden animate-fade-in">
+            <div class="mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Thermodynamic Simulation Dashboard</h2>
+                <p class="text-lg text-slate-700">
+                    A real-world Peltier module is non-ideal. Explore the steady-state governing equations interactively. Adjust the operational parameters to see how the net heat absorption (<span class="text-blue-600 font-semibold">Q<sub>c</sub></span>), total heat rejected (<span class="text-red-600 font-semibold">Q<sub>h</sub></span>), and electrical power consumed (<span class="text-slate-600 font-semibold">P</span>) change relative to the applied current.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h4 class="font-semibold text-slate-800 mb-4 uppercase text-sm tracking-wider">Environmental Variables</h4>
+                        
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-1">
+                                <label for="slider-dt" class="text-sm font-medium text-slate-700">Temperature Gradient (ΔT)</label>
+                                <span id="val-dt" class="text-sm font-bold text-blue-600">30 K</span>
+                            </div>
+                            <input type="range" id="slider-dt" min="0" max="70" value="30" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-slate-500 mt-1">Difference between hot and cold junctions (T<sub>h</sub> - T<sub>c</sub>).</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-1">
+                                <label for="slider-th" class="text-sm font-medium text-slate-700">Hot Junction Temp (T<sub>h</sub>)</label>
+                                <span id="val-th" class="text-sm font-bold text-red-600">320 K</span>
+                            </div>
+                            <input type="range" id="slider-th" min="290" max="360" value="320" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-slate-500 mt-1">Absolute temperature of the heat rejection side.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 text-slate-100 p-6 rounded-xl shadow-sm">
+                        <h4 class="font-semibold text-slate-300 mb-4 uppercase text-sm tracking-wider">Governing Equations</h4>
+                        <div class="text-xs space-y-3 font-mono">
+                            <p><span class="text-blue-400">Q<sub>c</sub></span> = α·T<sub>c</sub>·I - 0.5·I²·R<sub>m</sub> - K<sub>m</sub>·ΔT</p>
+                            <p><span class="text-red-400">Q<sub>h</sub></span> = α·T<sub>h</sub>·I + 0.5·I²·R<sub>m</sub> - K<sub>m</sub>·ΔT</p>
+                            <p><span class="text-slate-400">P</span> = α·I·ΔT + I²·R<sub>m</sub></p>
+                            <div class="border-t border-slate-600 pt-2 mt-2">
+                                <p class="text-green-400">1st Law Check: Q<sub>h</sub> = Q<sub>c</sub> + P</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-white p-4 md:p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center">
+                    <h4 class="w-full text-left font-semibold text-slate-800 mb-2">Performance vs. Applied Current</h4>
+                    <p class="w-full text-left text-xs text-slate-500 mb-4">Simulated generic module parameters: α=0.05 V/K, R<sub>m</sub>=2.0 Ω, K<sub>m</sub>=0.5 W/K.</p>
+                    <div class="chart-container w-full">
+                        <canvas id="thermoChart"></canvas>
+                    </div>
+                    <div class="w-full mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                        <p class="text-sm text-amber-800">
+                            <strong>Notice:</strong> As current increases, <span class="font-mono">Q<sub>c</sub></span> reaches a peak and then drops precipitously. This is because internal Joule heating (<span class="font-mono">I²R</span>) grows quadratically and eventually overwhelms the linear Peltier cooling (<span class="font-mono">αTI</span>). Operating at maximum current yields terrible efficiency.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-architecture" class="content-section hidden animate-fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Dual Heatsink Thermal Architecture</h2>
+            <p class="text-lg text-slate-700 mb-8">The TEC cannot be analyzed in isolation. It must be modeled using a 1D thermal resistance network. The heatsinks act as critical thermal boundaries.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <div class="bg-red-50 p-6 rounded-xl border border-red-200">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center font-bold mr-3">H</div>
+                        <h3 class="text-xl font-bold text-red-900">The Hot Side Heatsink</h3>
+                    </div>
+                    <p class="text-sm text-red-800 mb-4 font-semibold uppercase tracking-wide">System Stability Constraint</p>
+                    <p class="text-slate-700 mb-4">Must dissipate <span class="font-mono">Q<sub>h</sub></span>, which is significantly larger than <span class="font-mono">Q<sub>c</sub></span> due to added electrical power. If thermal resistance (<span class="font-mono">R<sub>θ,h</sub></span>) is too high, <span class="font-mono">T<sub>h</sub></span> rises, <span class="font-mono">ΔT</span> rises, back-conduction increases, and <span class="font-mono">Q<sub>c</sub></span> falls to zero (thermal runaway).</p>
+                    <div class="math-block bg-white border-l-red-500 text-sm font-mono text-slate-800">
+                        T<sub>h</sub> = T<sub>∞,h</sub> + (R<sub>θ,h</sub> + R<sub>θ,TIM</sub>)·Q<sub>h</sub>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mr-3">C</div>
+                        <h3 class="text-xl font-bold text-blue-900">The Cold Side Heatsink</h3>
+                    </div>
+                    <p class="text-sm text-blue-800 mb-4 font-semibold uppercase tracking-wide">Target Payload Absorption</p>
+                    <p class="text-slate-700 mb-4">Absorbs heat from the target environment or payload. Its thermal resistance dictates how closely the target temperature can approach the actual cold junction temperature.</p>
+                    <div class="math-block bg-white border-l-blue-500 text-sm font-mono text-slate-800">
+                        T<sub>c</sub> = T<sub>target</sub> - (R<sub>θ,c</sub> + R<sub>θ,TIM</sub>)·Q<sub>c</sub>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">Transient Thermal Dynamics</h3>
+                <p class="text-slate-600 mb-6">Steady-state equations are insufficient for pulsed-power applications (e.g., phased array radar cooling). The system must be modeled using lumped capacitance. The time-dependent temperature evolution is governed by coupled ordinary differential equations:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-sm">
+                    <div class="p-4 bg-slate-50 rounded border border-slate-200">
+                        C<sub>th,c</sub>·(dT<sub>c</sub>/dt) = Q<sub>target</sub> - Q<sub>c</sub>(t)
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded border border-slate-200">
+                        C<sub>th,h</sub>·(dT<sub>h</sub>/dt) = Q<sub>h</sub>(t) - (T<sub>h</sub>(t) - T<sub>∞,h</sub>) / R<sub>θ,h</sub>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-500 mt-4 italic">Where C<sub>th</sub> represents the thermal capacitance (J/K) of the respective assemblies. Solving requires numerical methods to predict transient undershoot.</p>
+            </div>
+        </section>
+
+        <section id="sec-advanced" class="content-section hidden animate-fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Multi-Stage Cascades & Parasitic Losses</h2>
+            <p class="text-lg text-slate-700 mb-8">When the required <span class="font-mono">ΔT</span> exceeds the theoretical maximum of a single stage (<span class="font-mono">ΔT<sub>max</sub> ≈ 70°C</span> at 300K), complex architectures are required.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4">Cascaded Architecture Thermodynamics</h3>
+                    <p class="text-slate-600 mb-4">In a cascade structure, the lower stage (Stage 2) cools the hot side of the upper stage (Stage 1). The critical engineering constraint:</p>
+                    <div class="p-4 bg-slate-800 text-slate-100 rounded-lg font-mono text-sm text-center mb-6">
+                        Q<sub>c, Stage2</sub> = Q<sub>h, Stage1</sub> = Q<sub>c, Stage1</sub> + P<sub>Stage1</sub>
+                    </div>
+                    <p class="text-slate-600">Because heat rejected grows exponentially, modules resemble a pyramid. The total Coefficient of Performance (<span class="font-mono">COP<sub>sys</sub></span>) drops drastically:</p>
+                    <div class="math-block bg-slate-50 font-mono text-xs overflow-x-auto text-slate-800">
+                        COP<sub>sys</sub> = [ ∏ ( 1 + 1/COP<sub>i</sub> ) - 1 ]⁻¹
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
+                    <h3 class="text-xl font-bold mb-2 w-full text-left">Exponential Heat Rejection (Visualized)</h3>
+                    <p class="text-xs text-slate-500 w-full text-left mb-4">Assuming identical pumping loads and COP=0.5 per stage.</p>
+                    <div class="chart-container w-full">
+                        <canvas id="cascadeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-100 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Parasitic Heat Losses and Contact Resistances</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center font-bold text-slate-700 text-xs mt-1 mr-3">1</div>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Convective/Radiative Loading</h4>
+                            <p class="text-sm text-slate-600">Heat leaks from ambient into the cold side. <span class="font-mono text-xs">Q<sub>leak</sub> = h·A(T<sub>∞</sub> - T<sub>c</sub>) + ε·σ·A(T<sub>∞</sub>⁴ - T<sub>c</sub>⁴)</span>. Requires vacuum encapsulation or foam insulation.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center font-bold text-slate-700 text-xs mt-1 mr-3">2</div>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">Electrical Contact Resistance (R<sub>c</sub>)</h4>
+                            <p class="text-sm text-slate-600">Solder junctions between copper interconnects and semiconductor pellets introduce parasitic Joule heating not accounted for in bulk material resistivity.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="sec-optimization" class="content-section hidden animate-fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Conclusion & Optimization Rules</h2>
+            <p class="text-lg text-slate-700 mb-8">Applying the thermodynamic principles discussed, adhere to the following core engineering rules for dual heatsink Peltier system design.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="glass-card bg-white p-6 rounded-xl shadow-md border-t-4 border-t-blue-500 hover:-translate-y-1 transition-transform cursor-pointer" onclick="toggleCardDetail('opt-1')">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">1. Optimize Current</h3>
+                    <p class="text-sm text-slate-600 mb-4 font-semibold text-blue-600">Never drive at I<sub>max</sub> continuously.</p>
+                    <p class="text-sm text-slate-700">Operating at <span class="font-mono text-xs">I<sub>max</sub></span> yields maximum heat pumping but terrible efficiency. Target <span class="font-mono text-xs">I<sub>opt</sub></span> for maximum Coefficient of Performance (COP).</p>
+                    <div id="opt-1" class="hidden mt-4 pt-4 border-t border-slate-200">
+                        <p class="font-mono text-xs bg-slate-100 p-2 rounded text-slate-800">I<sub>opt</sub> = (α·ΔT) / (R<sub>m</sub>·(√(1 + Z̅T) - 1))</p>
+                    </div>
+                </div>
+
+                <div class="glass-card bg-white p-6 rounded-xl shadow-md border-t-4 border-t-red-500 hover:-translate-y-1 transition-transform cursor-pointer" onclick="toggleCardDetail('opt-2')">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">2. Over-engineer Hot Side</h3>
+                    <p class="text-sm text-slate-600 mb-4 font-semibold text-red-600">Prepare for 2.5x to 4x the load.</p>
+                    <p class="text-sm text-slate-700">Because <span class="font-mono text-xs">Q<sub>h</sub> = Q<sub>c</sub> + P</span>, and TECs often operate at a COP between 0.3 and 0.6, the hot side heatsink must be massively oversized compared to the cold payload to prevent thermal runaway.</p>
+                    <div id="opt-2" class="hidden mt-4 pt-4 border-t border-slate-200 text-xs text-slate-600">
+                        *Failure to adhere to this is the #1 cause of TEC system failure.*
+                    </div>
+                </div>
+
+                <div class="glass-card bg-white p-6 rounded-xl shadow-md border-t-4 border-t-slate-800 hover:-translate-y-1 transition-transform cursor-pointer" onclick="toggleCardDetail('opt-3')">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">3. Minimize BLT</h3>
+                    <p class="text-sm text-slate-600 mb-4 font-semibold text-slate-800">Optimize interface materials.</p>
+                    <p class="text-sm text-slate-700">Minimize Bond-Line Thickness (BLT) by utilizing phase-change materials or high-performance thermal greases under high mounting pressure to minimize <span class="font-mono text-xs">R<sub>θ,TIM</sub></span>.</p>
+                    <div id="opt-3" class="hidden mt-4 pt-4 border-t border-slate-200 text-xs text-slate-600">
+                        Even small air gaps drastically reduce efficiency due to the high heat flux density of Peltier modules.
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-12 text-center text-slate-500 text-sm">
+                <p>End of System Documentation.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navButtons = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.content-section');
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navButtons.forEach(b => b.classList.remove('active', 'bg-slate-200', 'border-blue-500'));
+                btn.classList.add('active', 'bg-slate-200', 'border-blue-500');
+                
+                const targetId = btn.getAttribute('data-target');
+                sections.forEach(sec => {
+                    if (sec.id === targetId) {
+                        sec.classList.remove('hidden');
+                    } else {
+                        sec.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => {
+                    b.classList.remove('active', 'border-blue-600', 'text-blue-800');
+                    b.classList.add('text-slate-500');
+                });
+                btn.classList.add('active', 'border-blue-600', 'text-blue-800');
+                btn.classList.remove('text-slate-500');
+
+                const targetTab = btn.getAttribute('data-tab');
+                tabPanes.forEach(pane => {
+                    if(pane.id === 'tab-content-' + targetTab) {
+                        pane.classList.remove('hidden');
+                    } else {
+                        pane.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        function toggleCardDetail(id) {
+            const el = document.getElementById(id);
+            if(el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        const simParams = {
+            alpha: 0.05, 
+            Rm: 2.0,     
+            Km: 0.5      
+        };
+
+        let currentDt = 30;
+        let currentTh = 320;
+
+        function calculateThermoData() {
+            const dataQc = [];
+            const dataQh = [];
+            const dataP = [];
+            const labels = [];
+            
+            const Tc = currentTh - currentDt;
+
+            for (let I = 0; I <= 10; I += 0.5) {
+                labels.push(I.toFixed(1) + 'A');
+                
+                let Qc = (simParams.alpha * Tc * I) - (0.5 * Math.pow(I, 2) * simParams.Rm) - (simParams.Km * currentDt);
+                let P = (simParams.alpha * I * currentDt) + (Math.pow(I, 2) * simParams.Rm);
+                let Qh = Qc + P;
+
+                dataQc.push(Qc > 0 ? Qc : 0); 
+                dataQh.push(Qh);
+                dataP.push(P);
+            }
+            return { labels, dataQc, dataQh, dataP };
+        }
+
+        const ctxThermo = document.getElementById('thermoChart').getContext('2d');
+        let initialData = calculateThermoData();
+        
+        const thermoChart = new Chart(ctxThermo, {
+            type: 'line',
+            data: {
+                labels: initialData.labels,
+                datasets: [
+                    {
+                        label: 'Cooling Capacity (Qc)',
+                        data: initialData.dataQc,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Rejected Heat (Qh)',
+                        data: initialData.dataQh,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'transparent',
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Power Consumed (P)',
+                        data: initialData.dataP,
+                        borderColor: '#64748b',
+                        backgroundColor: 'transparent',
+                        tension: 0.4,
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Current (Amps)' },
+                        grid: { display: false }
+                    },
+                    y: {
+                        title: { display: true, text: 'Energy Rate (Watts)' },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { family: 'Inter', size: 13 },
+                        bodyFont: { family: 'Inter', size: 13 },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toFixed(1) + ' W';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Inter', size: 12 } }
+                    }
+                }
+            }
+        });
+
+        const sliderDt = document.getElementById('slider-dt');
+        const valDt = document.getElementById('val-dt');
+        const sliderTh = document.getElementById('slider-th');
+        const valTh = document.getElementById('val-th');
+
+        function updateThermoSimulation() {
+            currentDt = parseInt(sliderDt.value);
+            currentTh = parseInt(sliderTh.value);
+            
+            valDt.innerText = currentDt + ' K';
+            valTh.innerText = currentTh + ' K';
+
+            const newData = calculateThermoData();
+            thermoChart.data.datasets[0].data = newData.dataQc;
+            thermoChart.data.datasets[1].data = newData.dataQh;
+            thermoChart.data.datasets[2].data = newData.dataP;
+            thermoChart.update();
+        }
+
+        sliderDt.addEventListener('input', updateThermoSimulation);
+        sliderTh.addEventListener('input', updateThermoSimulation);
+
+        const ctxCascade = document.getElementById('cascadeChart').getContext('2d');
+        const cascadeChart = new Chart(ctxCascade, {
+            type: 'bar',
+            data: {
+                labels: ['Stage 1 (Top)', 'Stage 2 (Base)'],
+                datasets: [
+                    {
+                        label: 'Payload Heat (Qc)',
+                        data: [20, 20], 
+                        backgroundColor: '#3b82f6',
+                    },
+                    {
+                        label: 'Power Disp. (P) Stage 1',
+                        data: [40, 40], 
+                        backgroundColor: '#94a3b8',
+                    },
+                    {
+                        label: 'Power Disp. (P) Stage 2',
+                        data: [0, 120], 
+                        backgroundColor: '#475569',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, title: { display: true, text: 'Total Heat to Reject (Watts)' } }
+                },
+                plugins: {
+                    legend: { position: 'bottom', labels: {font: { family: 'Inter', size: 11}} },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + ' W';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermoelectric Cooling Engineering Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 50vh;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 40vh;
+                max-height: 300px;
+            }
+        }
+        input[type=range] {
+            accent-color: #0f172a;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            800: '#292524',
+                            900: '#1c1917',
+                        },
+                        accent: {
+                            cold: '#0ea5e9',
+                            hot: '#ef4444',
+                            neutral: '#8b5cf6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans leading-relaxed selection:bg-accent-neutral selection:text-white pb-20">
+
+    <!-- Chosen Palette: Warm Neutrals with Cold Blue and Hot Red Accents (Stone 50/100 bg, Stone 800 text, Sky 500 for cold, Red 500 for hot) -->
+    <!-- Application Structure Plan: The SPA uses a top-level tabbed navigation dashboard. It is structured into three thematic modules: 1. Thermodynamics (Focus on Qc equation), 2. Thermal Resistance (Focus on Dual Heatsink architecture), 3. Power Quality (Focus on Ripple current). This structure breaks down the complex physics into consumable, interactive simulators, allowing users to tweak variables and immediately see the systemic impacts, prioritizing active learning over passive reading. -->
+    <!-- Visualization & Content Choices: 1. Thermodynamics -> Goal: Understand Qc components -> Viz: Interactive Bar Chart (Positive cooling vs Parasitic heating) -> Interaction: Sliders for I, Tc, Th -> Justification: Clearly visualizes the opposing forces in a Peltier module. 2. Thermal Resistance -> Goal: Understand temperature drops -> Viz: Stepped Line Chart (Temperature Profile) -> Interaction: Sliders for Fan Speed, TIM quality -> Justification: Visually demonstrates why hot-side dissipation is a bottleneck. 3. Power Quality -> Goal: Show ripple degradation -> Viz: Doughnut Chart (COP) and Bar Chart (Delta T) -> Interaction: Slider for Ripple % -> Justification: Directly quantifies the hidden efficiency losses. Confirming NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight text-stone-900">
+                <span class="text-accent-cold">❄️ TEC</span><span class="text-stone-800"> Explorer</span>
+            </h1>
+            <nav class="flex space-x-1 sm:space-x-4 overflow-x-auto">
+                <button onclick="nav('thermo')" id="btn-thermo" class="px-3 py-2 text-sm font-medium rounded-md bg-stone-800 text-white transition-colors whitespace-nowrap">1. Thermodynamics</button>
+                <button onclick="nav('resistance')" id="btn-resistance" class="px-3 py-2 text-sm font-medium rounded-md text-stone-600 hover:bg-stone-100 transition-colors whitespace-nowrap">2. Thermal Network</button>
+                <button onclick="nav('power')" id="btn-power" class="px-3 py-2 text-sm font-medium rounded-md text-stone-600 hover:bg-stone-100 transition-colors whitespace-nowrap">3. Power Quality</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        <div class="mb-10 text-center max-w-3xl mx-auto">
+            <h2 class="text-3xl font-extrabold text-stone-900 sm:text-4xl">Advanced Thermoelectric Cooling</h2>
+            <div class="mb-8 rounded-2xl overflow-hidden shadow-lg border border-stone-200">
+                <img src="https://www.meerstetter.ch/images/compendium/TEC_Peltier_Element_Controller_Heatsink_Fan_6175.png" 
+                     alt="Thermoelectric Cooling Device Diagram" 
+                     class="w-full h-auto object-cover" 
+                     onerror="this.src='https://via.placeholder.com/800x400/0ea5e9/ffffff?text=Thermoelectric+Cooling+Device'">
+                <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                    Schematic diagram of a thermoelectric cooling device showing Peltier module with heatsink and fan
+                </div>
+            </div>
+            <p class="mt-4 text-lg text-stone-600">The Peltier Module and Dual Heatsink Architecture. Explore the fundamental solid-state physics of heavily doped Bismuth Telluride (Bi₂Te₃) semiconductor junctions operating as active heat pumps.</p>
+        </div>
+
+        <section id="sec-thermo" class="block animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 sm:p-8 mb-8">
+                <h3 class="text-2xl font-bold text-stone-900 mb-4 border-b border-stone-100 pb-2">1. The Physics of Peltier Effect</h3>
+                <div class="mb-6 rounded-lg overflow-hidden">
+                    <img src="https://www.researchgate.net/profile/Thermoelectric-Cooling/publication/353744615/figure/fig1/AS:6699259779408231@1537495054266/Thermoelectric-cooling-via-Peltier-module-3.png" 
+                         alt="Peltier Module Internal Structure" 
+                         class="w-full h-auto object-cover rounded-lg"
+                         onerror="this.src='https://via.placeholder.com/600x300/8b5cf6/ffffff?text=Peltier+Module+Structure'">
+                    <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                        Internal structure of a Peltier module showing semiconductor pellets and ceramic plates
+                    </div>
+                </div>
+                <p class="text-stone-600 mb-6 text-lg">
+                    This section explores the fundamental thermoelectric equation. A Peltier module does not "create" cold; it transfers heat. The net cooling capacity (Qc) is a delicate balance. It is driven by Peltier Effect, but constantly fought by parasitic resistive Joule Heating and Fourier Thermal Conduction from the hot side back to the cold side. Use the controls below to see how current and temperatures affect net cooling.
+                </p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="col-span-1 bg-stone-50 p-6 rounded-lg border border-stone-200">
+                        <h4 class="font-semibold text-stone-800 mb-4 uppercase tracking-wide text-sm">System Parameters</h4>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Applied Current (I): <span id="val-current" class="font-bold text-accent-hot">4.0 A</span></label>
+                            <input type="range" id="inp-current" min="0" max="8" step="0.1" value="4.0" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-stone-500 mt-1">Drives Peltier cooling, but quadratically increases Joule heating.</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Cold Junction Temp (Tc): <span id="val-tc" class="font-bold text-accent-cold">5 &deg;C</span></label>
+                            <input type="range" id="inp-tc" min="-20" max="25" step="1" value="5" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-stone-500 mt-1">Target temperature. Lower temperatures reduce raw Peltier efficiency.</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Hot Junction Temp (Th): <span id="val-th" class="font-bold text-accent-hot">45 &deg;C</span></label>
+                            <input type="range" id="inp-th" min="20" max="80" step="1" value="45" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-stone-500 mt-1">Higher Th drives severe Fourier back-conduction.</p>
+                        </div>
+
+                        <div class="mt-8 p-4 bg-white border border-stone-200 rounded text-center shadow-sm">
+                            <div class="text-sm text-stone-500 uppercase tracking-widest mb-1">Net Cooling (Qc)</div>
+                            <div id="val-qc" class="text-3xl font-extrabold text-stone-900">0.0 W</div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-1 lg:col-span-2 bg-white p-2 rounded-lg border border-stone-200 flex flex-col justify-center">
+                        <div class="text-center mb-2 text-sm text-stone-500 font-medium">Qc = &alpha;TcI - &frac12;I&sup2;R - K(Th - Tc)</div>
+                        <div class="chart-container">
+                            <canvas id="chart-thermo"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-stone-500 mt-4 px-4">
+                            Notice how pushing the current too high eventually causes Joule heating (-&frac12;I&sup2;R) to overwhelm the Peltier cooling (&alpha;TcI), dropping net performance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-resistance" class="hidden animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 sm:p-8 mb-8">
+                <h3 class="text-2xl font-bold text-stone-900 mb-4 border-b border-stone-100 pb-2">2. Thermal Resistance Network</h3>
+                <div class="mb-6 rounded-lg overflow-hidden">
+                    <img src="https://techimaging.co.uk/wp-content/uploads/2025/10/1760453392.png" 
+                         alt="Heat Sink Thermal Management" 
+                         class="w-full h-auto object-cover rounded-lg"
+                         onerror="this.src='https://via.placeholder.com/600x300/ef4444/ffffff?text=Heat+Sink+Thermal+Management'">
+                    <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                        Modern heat sink design with fins for optimal thermal dissipation
+                    </div>
+                </div>
+                <p class="text-stone-600 mb-6 text-lg">
+                    The thermal path from TEC hot side to ambient is the critical bottleneck. This section models the dual heatsink architecture: primary aluminum extrusion + secondary copper heat pipes. Explore how fan speed and thermal interface materials affect the overall thermal resistance (Rth) and maximum achievable ΔT.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="col-span-1 bg-stone-50 p-6 rounded-lg border border-stone-200">
+                        <h4 class="font-semibold text-stone-800 mb-4 uppercase tracking-wide text-sm">Thermal Bottlenecks</h4>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">TIM Quality (Paste): <span id="val-tim" class="font-bold text-stone-800">Standard</span></label>
+                            <input type="range" id="inp-tim" min="0" max="2" step="1" value="1" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-xs text-stone-500 mt-1">
+                                <span>Poor</span><span>Standard</span><span>Premium (Liquid Metal)</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Fan Speed (Forced Convection): <span id="val-fan" class="font-bold text-stone-800">50%</span></label>
+                            <input type="range" id="inp-fan" min="10" max="100" step="5" value="50" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-xs text-stone-500 mt-1">Dictates convective heat transfer coefficient (h).</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Total Power Dissipation (Qh):</label>
+                            <div class="text-2xl font-bold text-accent-hot">~ 85 W</div>
+                            <p class="text-xs text-stone-500 mt-1">Assumes standard operating conditions (Qc + Pin).</p>
+                        </div>
+                    </div>
+
+                    <div class="col-span-1 lg:col-span-2 bg-white p-2 rounded-lg border border-stone-200 flex flex-col justify-center">
+                        <div class="text-center mb-2 text-sm text-stone-500 font-medium">Temperature Profile across Resistance Network</div>
+                        <div class="chart-container">
+                            <canvas id="chart-network"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-stone-500 mt-4 px-4">
+                            The chart shows how the temperature drops across each physical layer. A high final temperature means the hot junction of the TEC is overheating, destroying efficiency.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-power" class="hidden animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 sm:p-8 mb-8">
+                <h3 class="text-2xl font-bold text-stone-900 mb-4 border-b border-stone-100 pb-2">3. Power Quality & Efficiency</h3>
+                <div class="mb-6 rounded-lg overflow-hidden">
+                    <img src="https://www.meerstetter.ch/customer-center/uploads/2021/08/TEC-efficiency-illustration-1024x576.jpg" 
+                         alt="TEC Efficiency and Power Quality" 
+                         class="w-full h-auto object-cover rounded-lg"
+                         onerror="this.src='https://via.placeholder.com/600x300/10b981/ffffff?text=TEC+Efficiency+Analysis'">
+                    <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                        Thermoelectric cooler efficiency analysis showing COP and power quality metrics
+                    </div>
+                </div>
+                <p class="text-stone-600 mb-6 text-lg">
+                    Real-world TEC performance is limited by power quality. Ripple current from switching power supplies reduces effective cooling capacity and increases heating. This section quantifies how AC ripple degrades COP and maximum ΔT compared to ideal DC power.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="col-span-1 bg-stone-50 p-6 rounded-lg border border-stone-200 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-semibold text-stone-800 mb-4 uppercase tracking-wide text-sm">Power Quality Control</h4>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-stone-700 mb-1">AC Ripple Current (%): <span id="val-ripple" class="font-bold text-accent-hot">5%</span></label>
+                                <input type="range" id="inp-ripple" min="0" max="30" step="1" value="5" class="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer">
+                                <p class="text-xs text-stone-500 mt-2 text-justify">
+                                    Engineering Best Practice: Power supplies for high-performance TECs must utilize linear regulation or high-frequency LC-filtered switching supplies to ensure ripple remains strictly below 5%.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mt-8">
+                            <div class="p-4 bg-white border border-stone-200 rounded text-center shadow-sm">
+                                <div class="text-xs text-stone-500 uppercase tracking-widest mb-1">Ideal &Delta;T</div>
+                                <div class="text-2xl font-bold text-stone-900">65.0 &deg;C</div>
+                            </div>
+                            <div class="p-4 bg-white border border-stone-200 rounded text-center shadow-sm">
+                                <div class="text-xs text-stone-500 uppercase tracking-widest mb-1">Actual &Delta;T</div>
+                                <div id="val-delta" class="text-2xl font-bold text-accent-hot">64.8 &deg;C</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-1 bg-white p-2 rounded-lg border border-stone-200 flex flex-col justify-center">
+                         <div class="text-center mb-2 text-sm text-stone-500 font-medium">Degradation of Cooling Capacity</div>
+                        <div class="chart-container">
+                            <canvas id="chart-ripple"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 text-center text-stone-500 text-sm">
+        <p>Interactive Analysis based on Solid-State Heat Pump principles. Designed for educational exploration of Thermoelectric Cooling.</p>
+    </footer>
+
+    <script>
+        const CONSTANTS = {
+            alpha: 0.05, 
+            R: 2.0,      
+            K: 0.5       
+        };
+
+        let chartThermo = null;
+        let chartNetwork = null;
+        let chartRipple = null;
+
+        function nav(sectionId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('sec-' + sectionId).classList.remove('hidden');
+            
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('bg-stone-800', 'text-white');
+                btn.classList.add('text-stone-600', 'hover:bg-stone-100');
+            });
+            const activeBtn = document.getElementById('btn-' + sectionId);
+            activeBtn.classList.remove('text-stone-600', 'hover:bg-stone-100');
+            activeBtn.classList.add('bg-stone-800', 'text-white');
+
+            if(sectionId === 'resistance' && chartNetwork) chartNetwork.update();
+            if(sectionId === 'power' && chartRipple) chartRipple.update();
+        }
+
+        function initThermoChart() {
+            const ctx = document.getElementById('chart-thermo').getContext('2d');
+            chartThermo = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Gross Peltier Cooling (+)', 'Joule Heating (-)', 'Fourier Conduction (-)'],
+                    datasets: [{
+                        label: 'Heat Transfer (Watts)',
+                        data: [0, 0, 0],
+                        backgroundColor: ['#0ea5e9', '#ef4444', '#f97316'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y.toFixed(1) + ' W';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Watts (W)' }
+                        }
+                    }
+                }
+            });
+            updateThermo();
+        }
+
+        function updateThermo() {
+            const current = parseFloat(document.getElementById('inp-current').value);
+            const tc_c = parseFloat(document.getElementById('inp-tc').value);
+            const th_c = parseFloat(document.getElementById('inp-th').value);
+
+            document.getElementById('val-current').innerText = current.toFixed(1) + ' A';
+            document.getElementById('val-tc').innerText = tc_c + ' °C';
+            document.getElementById('val-th').innerText = th_c + ' °C';
+
+            const tc_k = tc_c + 273.15;
+            const th_k = th_c + 273.15;
+
+            const peltier = CONSTANTS.alpha * tc_k * current;
+            const joule = 0.5 * (current * current) * CONSTANTS.R;
+            const fourier = CONSTANTS.K * (th_k - tc_k);
+
+            let qc = peltier - joule - fourier;
+            
+            const qcEl = document.getElementById('val-qc');
+            qcEl.innerText = qc.toFixed(1) + ' W';
+            if (qc > 0) {
+                qcEl.classList.remove('text-accent-hot');
+                qcEl.classList.add('text-accent-cold');
+            } else {
+                qcEl.classList.remove('text-accent-cold');
+                qcEl.classList.add('text-accent-hot');
+            }
+
+            chartThermo.data.datasets[0].data = [peltier, joule, fourier];
+            chartThermo.update();
+        }
+
+        function initNetworkChart() {
+            const ctx = document.getElementById('chart-network').getContext('2d');
+            chartNetwork = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['TEC Hot Junction', 'TIM Layer', 'Baseplate', 'Fin Base', 'Fin Tips', 'Ambient Air'],
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: [70, 65, 63, 60, 45, 25],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.1,
+                        stepped: false,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Temperature (°C)' },
+                            min: 20,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            updateNetwork();
+        }
+
+        function updateNetwork() {
+            const timQual = parseInt(document.getElementById('inp-tim').value);
+            const fanSpeed = parseInt(document.getElementById('inp-fan').value);
+            
+            let timText = 'Standard';
+            if(timQual === 0) timText = 'Poor';
+            if(timQual === 2) timText = 'Premium';
+            document.getElementById('val-tim').innerText = timText;
+            document.getElementById('val-fan').innerText = fanSpeed + '%';
+
+            const Qh = 85; 
+            const ambient = 25;
+            
+            const r_tim = timQual === 0 ? 0.15 : (timQual === 1 ? 0.08 : 0.02);
+            const r_base = 0.05;
+            const r_fins = 0.10;
+            const h_conv_base = 0.8;
+            const h_conv = h_conv_base - (fanSpeed / 100) * 0.6; 
+            
+            const temp_air = ambient;
+            const temp_fintips = temp_air + (Qh * h_conv * 0.5);
+            const temp_finbase = temp_fintips + (Qh * h_conv * 0.5);
+            const temp_base = temp_finbase + (Qh * r_fins);
+            const temp_tim = temp_base + (Qh * r_base);
+            const temp_junction = temp_tim + (Qh * r_tim);
+
+            chartNetwork.data.datasets[0].data = [
+                temp_junction,
+                temp_tim,
+                temp_base,
+                temp_finbase,
+                temp_fintips,
+                temp_air
+            ];
+            chartNetwork.update();
+        }
+
+        function initRippleChart() {
+            const ctx = document.getElementById('chart-ripple').getContext('2d');
+            chartRipple = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ideal Performance', 'Actual Performance (with Ripple)'],
+                    datasets: [{
+                        label: 'Max Delta T (°C)',
+                        data: [65, 64.8],
+                        backgroundColor: ['#8b5cf6', '#ef4444'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Maximum ΔT (°C)' }
+                        }
+                    }
+                }
+            });
+            updateRipple();
+        }
+
+        function updateRipple() {
+            const ripple = parseFloat(document.getElementById('inp-ripple').value);
+            document.getElementById('val-ripple').innerText = ripple + '%';
+
+            const ideal_dt = 65.0;
+            const ripple_ratio = ripple / 100;
+            const actual_dt = ideal_dt * (1 - Math.pow(ripple_ratio, 2));
+
+            document.getElementById('val-delta').innerText = actual_dt.toFixed(1) + ' °C';
+            
+            chartRipple.data.datasets[0].data = [ideal_dt, actual_dt];
+            chartRipple.update();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initThermoChart();
+            initNetworkChart();
+            initRippleChart();
+
+            document.getElementById('inp-current').addEventListener('input', updateThermo);
+            document.getElementById('inp-tc').addEventListener('input', updateThermo);
+            document.getElementById('inp-th').addEventListener('input', updateThermo);
+
+            document.getElementById('inp-tim').addEventListener('input', updateNetwork);
+            document.getElementById('inp-fan').addEventListener('input', updateNetwork);
+
+            document.getElementById('inp-ripple').addEventListener('input', updateRipple);
+        });
+
+    </script>
+</body>
+</html>

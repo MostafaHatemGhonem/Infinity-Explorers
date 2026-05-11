@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alkaline Water Electrolysis Reactor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- KaTeX for Equation Rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+<style>
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 300px;
+    max-height: 400px;
+}
+@media (min-width: 768px) {
+    .chart-container {
+        height: 350px;
+    }
+}
+body {
+    background-color: #fafaf9;
+    color: #292524;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    scroll-behavior: smooth;
+}
+/* Custom scrollbar for formula cards if they get too long on mobile */
+.formula-card {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+</style>
+</head>
+<body class="antialiased selection:bg-teal-200 selection:text-teal-900">
+<!-- Chosen Palette: Warm Neutrals (Stone-50, Stone-800) with Subdued Teal (Teal-600) and Amber (Amber-600) accents -->
+<!-- Application Structure Plan: A linear narrative dashboard with an added 'Governing Equations' matrix. It begins with project context, flows into an interactive assembly guide, progresses to data-driven thermodynamic analyses (now augmented with beautifully rendered KaTeX mathematical models), and concludes with critical safety insights. The math is placed in modular 'cards' to prevent overwhelming the user while providing deep engineering rigor. -->
+<!-- Visualization & Content Choices: 1. Construction -> Interactive Step Viewer -> Reduces text wall -> Vanilla JS. 2. Equations -> Grid of KaTeX rendered cards -> Integrates university-level math cleanly into the UI. 3. Thermodynamics -> Stacked Bar Chart -> Compares theoretical vs actual voltage -> Chart.js. 4. Efficiency -> Doughnut Chart -> Visualizes Faradaic losses -> Chart.js. NO SVG/Mermaid used. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<nav class="fixed top-0 w-full bg-stone-100/90 backdrop-blur-md border-b border-stone-200 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+            <div class="flex-shrink-0 font-bold text-xl text-teal-800">
+                ⚡ AWE Project
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="text-stone-600 hover:text-teal-600 font-medium transition-colors">Overview</a>
+                <a href="#construction" class="text-stone-600 hover:text-teal-600 font-medium transition-colors">Construction</a>
+                <a href="#thermodynamics" class="text-stone-600 hover:text-teal-600 font-medium transition-colors">Analysis</a>
+                <a href="#safety" class="text-stone-600 hover:text-teal-600 font-medium transition-colors">Safety</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="pt-24 pb-12">
+    <!-- Overview Section -->
+    <section id="overview" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+        <div class="text-center max-w-4xl mx-auto mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-stone-800 mb-6 tracking-tight">
+                Batch-Type Alkaline Water Electrolysis Reactor
+            </h1>
+            <div class="mb-8 rounded-2xl overflow-hidden shadow-lg border border-stone-200">
+                <img src="https://tse3.mm.bing.net/th/id/OIP.DjMPQvGkct0KoTmK2NBoowHaGD?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" 
+                     alt="Alkaline Water Electrolysis Cell Diagram" 
+                     class="w-full h-auto object-cover" 
+                     onerror="this.src='https://via.placeholder.com/800x400/14b8a6/ffffff?text=Alkaline+Electrolysis+Cell+Diagram'">
+                <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                    Schematic diagram of an alkaline water electrolysis cell showing electrode configuration and gas separation
+                </div>
+            </div>
+            <p class="text-lg text-stone-600 leading-relaxed">
+                A comprehensive technical analysis detailing the thermodynamics, reaction kinetics, material degradation modes, efficiency calculations, and safety architecture involved in the stoichiometric production of oxyhydrogen gas via a unipolar AWE batch reactor.
+            </p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-8">
+            <h2 class="text-2xl font-bold text-stone-800 mb-6 border-b border-stone-100 pb-2">Project Team: Infinity Explorers</h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center text-stone-700 font-medium text-lg" dir="rtl">
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">مصطفى حاتم</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">هاني ايهاب</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">عمر محمد رضا</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">احمد سامي</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">ابانوب عماد</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">منه الرحمن محمد</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">مينا ناصر</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">سها مدحت</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">تسنيم عبد الرحمن</div>
+                <div class="bg-stone-50 p-3 rounded-lg border border-stone-100">الاء ابراهيم</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Construction Section -->
+    <section id="construction" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 bg-stone-100 py-12 rounded-3xl">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-stone-800 mb-4">I. System Assembly and Construction</h2>
+            <p class="text-stone-600 max-w-3xl">This section details the physical components and the step-by-step procedure for constructing the prototype. Interact with the assembly viewer to follow the sequential build process.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+                <h3 class="text-xl font-bold text-stone-800 mb-4 flex items-center gap-2"><span>📋</span> Bill of Materials</h3>
+                <ul class="space-y-3 text-stone-600 text-sm">
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Primary Reactor Vessel</span> <span class="font-medium">~900ml airtight</span></li>
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Flashback Arrestor</span> <span class="font-medium">~100ml airtight</span></li>
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Electrodes</span> <span class="font-medium">2x Hex Bolt (2.5/6)</span></li>
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Hardware</span> <span class="font-medium">24x Nut, 18x Washer</span></li>
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Pneumatics</span> <span class="font-medium">1m Tubing, 15cm Pipe, Barb</span></li>
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Electrical</span> <span class="font-medium">9V Battery, Switch, Wires</span></li>
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Electrolyte</span> <span class="font-medium">KOH or NaHCO3</span></li>
+                    <li class="flex justify-between border-b border-stone-100 pb-1"><span>Solvent</span> <span class="font-medium">Distilled Water</span></li>
+                </ul>
+            </div>
+
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-stone-200 flex flex-col">
+                <h3 class="text-xl font-bold text-stone-800 mb-4 flex items-center gap-2"><span>⚙️</span> Interactive Assembly Guide</h3>
+                
+                <div class="mb-6 rounded-2xl overflow-hidden shadow-md border border-stone-200">
+                    <img src="https://image.shutterstock.com/shutterstock/photos/2080753510/display_1500/stock-vector-electrolysis-of-water-labeled-diagram-to-show-the-electrolysis-of-acidified-water-forming-hydrogen-2080753510.jpg" 
+                         alt="Water Electrolysis Laboratory Setup" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://via.placeholder.com/600x400/0f766e/ffffff?text=Water+Electrolysis+Laboratory+Setup'">
+                    <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                        Typical laboratory water electrolysis setup showing gas collection and electrode arrangement
+                    </div>
+                </div>
+                
+                <div class="flex-grow flex flex-col justify-center items-center bg-stone-50 rounded-xl p-8 border border-stone-100 text-center relative overflow-hidden min-h-[250px]">
+                    <div class="absolute top-4 left-4 bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider" id="step-indicator">Step 1 of 9</div>
+                    <h4 class="text-2xl font-bold text-teal-700 mt-6 mb-4" id="step-title">Electrode Fabrication</h4>
+                    <p class="text-stone-600 md:text-lg max-w-xl mx-auto" id="step-desc">Thread a washer and a nut onto a hex bolt, fastening tightly with a wrench.</p>
+                </div>
+
+                <div class="flex justify-between mt-6">
+                    <button id="prev-btn" class="px-6 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg font-medium transition-colors disabled:opacity-50">Previous</button>
+                    <div class="flex gap-2 items-center" id="step-dots"></div>
+                    <button id="next-btn" class="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50">Next Step</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Thermodynamics & Math Section -->
+    <section id="thermodynamics" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold text-stone-800 mb-4">II. Advanced Electrochemical Analysis</h2>
+            <div class="mb-8 rounded-2xl overflow-hidden shadow-lg border border-stone-200">
+                <img src="https://th.bing.com/th/id/R.efef824e843dd17948b9e86af5fe758c?rik=McgOBKMzSXALRw&pid=ImgRaw&r=0" 
+                     alt="Industrial Water Electrolysis Process" 
+                     class="w-full h-auto object-cover"
+                     onerror="this.src='https://via.placeholder.com/800x400/14b8a6/ffffff?text=Industrial+Water+Electrolysis+System'">
+                <div class="bg-stone-100 px-4 py-2 text-sm text-stone-600 text-center">
+                    Industrial-scale water electrolysis system showing the separation of hydrogen and oxygen gases
+                </div>
+            </div>
+            <p class="text-stone-600 max-w-3xl">An engineering evaluation revealing thermodynamic inefficiencies and kinetic barriers. This section explores the fundamental governing equations and visualizes the energy requirements and actual performance of the DIY prototype.</p>
+        </div>
+
+        <!-- Governing Equations Dashboard -->
+        <div class="mb-16">
+            <h3 class="text-2xl font-bold text-stone-800 mb-6 flex items-center gap-2"><span>📐</span> Governing Equations & Kinetics</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1: Thermodynamics -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition-shadow">
+                    <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-2">Thermodynamics</div>
+                    <h4 class="font-bold text-stone-800 mb-2">Cell Potentials</h4>
+                    <p class="text-xs text-stone-500 mb-4 border-b border-stone-100 pb-2">Reversible potential based on Gibbs free energy ($\Delta G^\circ = 237.1 \text{ kJ/mol}$) vs. Thermoneutral voltage ($\Delta H^\circ = 285.8 \text{ kJ/mol}$).</p>
+                    <div class="formula-card text-stone-800 text-sm">
+                        $$ E^\circ_{rev} = \frac{\Delta G^\circ}{zF} \approx 1.23 \text{ V} $$
+                        $$ E_{th} = \frac{\Delta H^\circ}{zF} \approx 1.48 \text{ V} $$
+                    </div>
+                </div>
+
+                <!-- Card 2: Half-Cell Reactions -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition-shadow">
+                    <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-2">Alkaline Medium</div>
+                    <h4 class="font-bold text-stone-800 mb-2">Half-Cell Kinetics</h4>
+                    <p class="text-xs text-stone-500 mb-4 border-b border-stone-100 pb-2">Reduction at the cathode producing $H_2$ and oxidation at the anode producing $O_2$.</p>
+                    <div class="formula-card text-stone-800 text-sm">
+                        <span class="text-xs text-stone-400">Cathode:</span>
+                        $$ 2H_2O(l) + 2e^- \rightarrow H_2(g) + 2OH^- $$
+                        <span class="text-xs text-stone-400 mt-2 block">Anode:</span>
+                        $$ 2OH^-(aq) \rightarrow \frac{1}{2}O_2(g) + H_2O(l) + 2e^- $$
+                    </div>
+                </div>
+
+                <!-- Card 3: Overpotentials -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition-shadow">
+                    <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-2">System Losses</div>
+                    <h4 class="font-bold text-stone-800 mb-2">Operating Cell Voltage</h4>
+                    <p class="text-xs text-stone-500 mb-4 border-b border-stone-100 pb-2">Actual operating voltage required exceeds theoretical minimum due to activation, ohmic, and concentration overpotentials.</p>
+                    <div class="formula-card text-stone-800 text-sm">
+                        $$ V_{cell} = E^\circ_{rev} + \eta_{act,a} + |\eta_{act,c}| + \eta_{ohm} + \eta_{conc} $$
+                        <span class="text-xs text-stone-400 mt-2 block">Tafel Equation (Activation):</span>
+                        $$ \eta_{act} = \frac{RT}{\alpha z F} \ln\left(\frac{i}{i_0}\right) $$
+                    </div>
+                </div>
+
+                <!-- Card 4: Faraday's Law -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition-shadow">
+                    <div class="text-xs font-bold text-teal-600 uppercase tracking-wide mb-2">Production Yield</div>
+                    <h4 class="font-bold text-stone-800 mb-2">Mass & Volume Transfer</h4>
+                    <p class="text-xs text-stone-500 mb-4 border-b border-stone-100 pb-2">Theoretical yield is governed by Faraday's First Law of Electrolysis based on current ($I$) and time ($t$).</p>
+                    <div class="formula-card text-stone-800 text-sm">
+                        $$ m = \frac{\int I dt \cdot M}{z \cdot F} $$
+                        <span class="text-xs text-stone-400 mt-2 block">Volume at STP:</span>
+                        $$ V_{H_2, theoretical} = \left( \frac{I \cdot t}{2 \cdot 96485} \right) \cdot 22.4 \text{ L} $$
+                    </div>
+                </div>
+
+                <!-- Card 5: Parasitic Reactions -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 hover:shadow-md transition-shadow lg:col-span-2">
+                    <div class="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">Failure Mode</div>
+                    <h4 class="font-bold text-stone-800 mb-2">Anodic Dissolution (Steel Corrosion)</h4>
+                    <p class="text-xs text-stone-500 mb-4 border-b border-stone-100 pb-2">In the DIY setup, bare steel outcompetes the oxygen evolution reaction, dissolving the anode and reducing Faradaic efficiency ($\eta_F$).</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="formula-card text-stone-800 text-sm">
+                            <span class="text-xs text-stone-400">Iron Oxidation:</span>
+                            $$ Fe(s) \rightarrow Fe^{2+}(aq) + 2e^- $$
+                            $$ Fe^{2+}(aq) + 2OH^- \rightarrow Fe(OH)_2(s) $$
+                        </div>
+                        <div class="formula-card text-stone-800 text-sm">
+                            <span class="text-xs text-stone-400">Faradaic Efficiency:</span>
+                            $$ \eta_F = \frac{V_{H_2, actual}}{V_{H_2, theoretical}} \times 100\% $$
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Data Visualizations -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+            <div>
+                <div class="inline-block px-3 py-1 bg-stone-200 text-stone-700 rounded-full text-xs font-bold uppercase tracking-wider mb-4">Thermodynamics Data</div>
+                <h3 class="text-2xl font-bold text-stone-800 mb-4">Voltage Distribution & Ohmic Losses</h3>
+                <p class="text-stone-600 mb-4">
+                    Applying a 9V DC source across a single unipolar cell introduces severe inefficiencies. As mapped in the chart, over 80% of the applied energy is dissipated entirely as Joule heating (<span class="font-mono text-sm">I²R</span> losses), which simply heats the water.
+                </p>
+                <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 font-mono text-sm text-stone-700">
+                    Voltage Efficiency ($\varepsilon_V$) = 1.48 V / 9.0 V ≈ 16.4%
+                </div>
+            </div>
+            <div>
+                <div class="chart-container bg-white p-4 rounded-2xl shadow-sm border border-stone-100">
+                    <canvas id="voltageChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center flex-row-reverse lg:flex-row">
+            <div class="order-2 lg:order-1">
+                <div class="chart-container bg-white p-4 rounded-2xl shadow-sm border border-stone-100">
+                    <canvas id="efficiencyChart"></canvas>
+                </div>
+            </div>
+            <div class="order-1 lg:order-2">
+                <div class="inline-block px-3 py-1 bg-stone-200 text-stone-700 rounded-full text-xs font-bold uppercase tracking-wider mb-4">Yield Data</div>
+                <h3 class="text-2xl font-bold text-stone-800 mb-4">Practical Efficiency vs Parasitic Loss</h3>
+                <p class="text-stone-600 mb-4">
+                    The use of bare steel bolts leads to massive activation overpotentials. Low electrocatalytic activity means a severe voltage penalty is required.
+                </p>
+                <p class="text-stone-600 mb-4">
+                    Because a portion of the electrical current is wasted on side reactions (specifically the corrosion of the iron anode, as modeled in the equations above), the actual Faradaic efficiency of this DIY system falls significantly below theoretical limits.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Section -->
+    <section id="safety" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold text-stone-800 mb-4">III. System Failures & Industrial Scaling</h2>
+            <p class="text-stone-600 max-w-3xl">Understanding the critical physical limitations of the prototype is essential for transitioning to safe, industrial-scale energy storage architectures.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-amber-500 hover:shadow-md transition-shadow">
+                <div class="text-4xl mb-4">⚠️</div>
+                <h3 class="text-xl font-bold text-stone-800 mb-3">Fluidic Safety: Oxyhydrogen Hazard</h3>
+                <div class="mb-4 rounded-lg overflow-hidden">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Oxyhydrogen_flame_test.jpg/640px-Oxyhydrogen_flame_test.jpg" 
+                         alt="Oxyhydrogen Flame Demonstration" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://via.placeholder.com/400x300/f59e0b/ffffff?text=Oxyhydrogen+Flame+Demo'">
+                </div>
+                <p class="text-stone-600 text-sm">
+                    The system generates mixed Oxyhydrogen (Brown's Gas), which has a detonation velocity exceeding 2800 m/s and a low ignition energy (0.02 mJ). The secondary container acts as a critical <strong>Hydraulic Flame Arrestor</strong> to quench backward flame propagation.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-stone-800 hover:shadow-md transition-shadow">
+                <div class="text-4xl mb-4">🧪</div>
+                <h3 class="text-xl font-bold text-stone-800 mb-3">Material Degradation</h3>
+                <div class="mb-4 rounded-lg overflow-hidden">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Rust_on_iron.jpg/640px-Rust_on_iron.jpg" 
+                         alt="Iron Corrosion and Rust Formation" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://via.placeholder.com/400x300/57534e/ffffff?text=Iron+Corrosion+Rust'">
+                </div>
+                <p class="text-stone-600 text-sm">
+                    As established in the kinetic equations, unprotected steel rapidly dissolves into iron(II) ions in highly alkaline conditions, precipitating rust sludge, increasing ohmic resistance, and physically consuming the anode.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-teal-600 hover:shadow-md transition-shadow">
+                <div class="text-4xl mb-4">🏭</div>
+                <h3 class="text-xl font-bold text-stone-800 mb-3">Industrial Membrane Integration</h3>
+                <div class="mb-4 rounded-lg overflow-hidden">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/PEM_electrolyzer_schematic.svg/640px-PEM_electrolyzer_schematic.svg.png" 
+                         alt="PEM Electrolyzer Schematic" 
+                         class="w-full h-auto object-cover"
+                         onerror="this.src='https://via.placeholder.com/400x300/0f766e/ffffff?text=PEM+Electrolyzer+Schematic'">
+                </div>
+                <p class="text-stone-600 text-sm">
+                    To scale safely, future iterations must incorporate a separator like a Proton Exchange Membrane (PEM) or Zirfon diaphragm. These physically isolate the $H_2$ and $O_2$ streams directly at evolution, ensuring 99.999% gas purity.
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    // Initialize KaTeX Math Rendering when the DOM is fully parsed
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false // Prevents the whole process from crashing if a single equation has a syntax error
+        });
+    });
+
+    // Interactive Assembly Guide Logic
+    const stepsData = [
+        {
+            title: "Electrode Fabrication",
+            desc: "Thread a washer and a nut onto a hex bolt, fastening tightly with a wrench. Repeat 9 times per bolt to maximize surface area and lower current density."
+        },
+        {
+            title: "Pneumatic Sealing",
+            desc: "Trace the lid of the secondary container onto the rubber/foam sheet. Cut a ring and insert it under the cap to serve as a hermetic O-ring."
+        },
+        {
+            title: "Vessel Machining",
+            desc: "Puncture three tight-fitting holes into the primary reactor lid (for the hose barb and two bolts). Puncture two holes in the secondary lid for the pipes."
+        },
+        {
+            title: "Reactor Integration",
+            desc: "Apply epoxy to the primary lid holes. Seat the hose barb. Insert the electrodes through the lid and secure with nuts on both sides to compress the seal."
+        },
+        {
+            title: "Arrestor Sizing",
+            desc: "Cut the rigid plastic pipe into two lengths. The inlet pipe must be fully submerged near the bottom. The outlet pipe should barely penetrate the lid."
+        },
+        {
+            title: "Arrestor Securing",
+            desc: "Secure both rigid plastic pipes into the holes of the secondary container's lid using epoxy resin. Allow proper curing time."
+        },
+        {
+            title: "Electrical Circuit",
+            desc: "Wire the 9V battery connector in series with the DC switch. Connect output and negative terminal to the exposed electrode threads. Insulate with tape."
+        },
+        {
+            title: "Electrolyte Charging",
+            desc: "Dissolve 1 tsp of KOH or NaHCO3 into distilled water in the primary reactor. Fill the secondary container with distilled water to submerge the inlet pipe only."
+        },
+        {
+            title: "Final Connection",
+            desc: "With switch OFF, secure terminal wires to electrodes. Connect pneumatic tubing from primary reactor output to the submerged inlet of the arrestor."
+        }
+    ];
+
+    let currentStep = 0;
+    const titleEl = document.getElementById('step-title');
+    const descEl = document.getElementById('step-desc');
+    const indEl = document.getElementById('step-indicator');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const dotsContainer = document.getElementById('step-dots');
+
+    function initSteps() {
+        for (let i = 0; i < stepsData.length; i++) {
+            const dot = document.createElement('div');
+            dot.className = `w-2 h-2 rounded-full ${i === 0 ? 'bg-teal-600' : 'bg-stone-300'}`;
+            dotsContainer.appendChild(dot);
+        }
+        updateStep();
+    }
+
+    function updateStep() {
+        titleEl.textContent = stepsData[currentStep].title;
+        descEl.textContent = stepsData[currentStep].desc;
+        indEl.textContent = `Step ${currentStep + 1} of ${stepsData.length}`;
+        
+        prevBtn.disabled = currentStep === 0;
+        nextBtn.disabled = currentStep === stepsData.length - 1;
+
+        const dots = dotsContainer.children;
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].className = `w-2 h-2 rounded-full transition-colors ${i === currentStep ? 'bg-teal-600 w-4' : 'bg-stone-300'}`;
+        }
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 0) { currentStep--; updateStep(); }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentStep < stepsData.length - 1) { currentStep++; updateStep(); }
+    });
+
+    initSteps();
+
+    // Chart.js Implementations
+    const vCtx = document.getElementById('voltageChart').getContext('2d');
+    new Chart(vCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Voltage Distribution (9V Total)'],
+            datasets: [
+                {
+                    label: 'Reversible Potential (1.23V)',
+                    data: [1.23],
+                    backgroundColor: '#14b8a6', 
+                    borderWidth: 0
+                },
+                {
+                    label: 'Thermoneutral Req (0.25V)',
+                    data: [0.25], 
+                    backgroundColor: '#0f766e', 
+                    borderWidth: 0
+                },
+                {
+                    label: 'Wasted as Heat (7.52V)',
+                    data: [7.52],
+                    backgroundColor: '#f59e0b', 
+                    borderWidth: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: 'Applied Voltage Breakdown', font: { size: 14 } },
+                tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} V` } }
+            },
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, title: { display: true, text: 'Voltage (V)' }, max: 10 }
+            }
+        }
+    });
+
+    const eCtx = document.getElementById('efficiencyChart').getContext('2d');
+    new Chart(eCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Actual Yield (Efficiency)', 'Parasitic Loss (Corrosion)'],
+            datasets: [{
+                data: [80, 20],
+                backgroundColor: ['#0f766e', '#d6d3d1'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                title: { display: true, text: 'Estimated Faradaic Efficiency', font: { size: 14 } },
+                tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ~${ctx.parsed}%` } }
+            }
+        }
+    });
+</script>
+</body>
+</html>
