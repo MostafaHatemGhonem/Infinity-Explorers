@@ -4,3 +4,6 @@
 [submodule "3D-orbital-mechanics-simulator"]
 	path = 3D-orbital-mechanics-simulator
 	url = https://github.com/hany73-max/3D-orbital-mechanics-simulator
+[submodule "Advanced-SDR-Radar-Simulation-Stealth-Detection"]
+	path = Advanced-SDR-Radar-Simulation-Stealth-Detection
+	url = https://github.com/MostafaHatemGhonem/Advanced-SDR-Radar-Simulation-Stealth-Detection
