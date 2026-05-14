@@ -1,3 +1,6 @@
 [submodule "Impact-X"]
 	path = Impact-X
 	url = https://github.com/MostafaHatemGhonem/Impact-X
+[submodule "3D-orbital-mechanics-simulator"]
+	path = 3D-orbital-mechanics-simulator
+	url = https://github.com/hany73-max/3D-orbital-mechanics-simulator
