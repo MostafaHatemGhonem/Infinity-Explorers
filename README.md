@@ -138,6 +138,15 @@ We envision a world where:
 - Power point tracking simulation
 - Failure mode analysis
 
+### 🚀 **Aerospace & Navigation Systems**
+
+#### [Rocket GPS-INS Fusion](https://rocketgpsinsfusion-opal.vercel.app/)
+**Hardware-in-the-Loop telemetry processing**
+- Asynchronous sensor polling
+- Kinematic calculations
+- Discrete Kalman filtering
+- Real-time trajectory visualization
+
 ### ⚡ **Electronic & Sensor Systems**
 
 #### [Door Security Alarm](https://doorsecurityalarm.vercel.app/)

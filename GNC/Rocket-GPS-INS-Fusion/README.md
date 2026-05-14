@@ -4,6 +4,8 @@ A comprehensive Data Acquisition (DAQ) and Sensor Fusion system for rocket traje
 
 ## 🌟 Overview
 
+Check out our **[Live Interactive Demo](https://rocketgpsinsfusion-opal.vercel.app/)** to explore the hardware architecture, software pipeline, and test the Kalman logic directly in your browser.
+
 The system consists of two main components:
 1. **Hardware/Firmware:** An Arduino-based DAQ system reading data from an MPU6050 (Accelerometer/Gyroscope) and a GPS module, transmitting binary data over serial.
 2. **Software (Python):** A desktop application that receives the serial data, processes it through kinematics algorithms and a Kalman Filter, and visualizes the flight trajectory and telemetry in real-time.
