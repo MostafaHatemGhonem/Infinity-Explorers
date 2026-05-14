@@ -138,6 +138,22 @@ We envision a world where:
 - Power point tracking simulation
 - Failure mode analysis
 
+### ⚡ **Electronic & Sensor Systems**
+
+#### [Door Security Alarm](https://doorsecurityalarm.vercel.app/)
+**Automated security and access control system**
+- Intrusion detection simulation
+- Sensor integration analysis
+- Alarm trigger optimization
+- Security protocol testing
+
+#### [Magnetic Polarity Detector](https://magnetic-polarity-detector.vercel.app/)
+**Interactive magnetic field analysis tool**
+- Magnetic pole identification
+- Field strength visualization
+- Sensor calibration and tuning
+- Real-time polarity detection
+
 ### 🎯 **What These Platforms Offer**
 
 Each interactive dashboard provides:
